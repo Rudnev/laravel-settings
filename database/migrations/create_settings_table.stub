@@ -1,0 +1,63 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+
+class CreateSettingsTable extends Migration
+{
+    /**
+     * @var string
+     */
+    protected $conn;
+
+    /**
+     * @var string
+     */
+    protected $table;
+
+    /**
+     * @var string
+     */
+    protected $key;
+
+    /**
+     * @var string
+     */
+    protected $value;
+
+    /**
+     * CreateSettingsTable constructor.
+     */
+    public function __construct()
+    {
+        $this->conn  = config('settings.stores.database.connection');
+        $this->table = config('settings.stores.database.table');
+        $this->key   = config('settings.stores.database.key_column');
+        $this->value = config('settings.stores.database.value_column');
+    }
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::connection($this->conn)->create($this->table, function(Blueprint $table)
+        {
+        	$table->increments('id');
+            $table->string($this->key)->unique();
+            $table->text($this->value)->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::connection($this->conn)->drop($this->table);
+    }
+}

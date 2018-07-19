@@ -1,0 +1,59 @@
+{
+  "name": "rudnev/laravel-settings",
+  "description": "Persistent settings for Laravel 5",
+  "keywords": [
+    "rudnev",
+    "laravel",
+    "settings"
+  ],
+  "homepage": "https://github.com/rudnev/laravel-settings",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Andrei Rudnev",
+      "email": "andrey@rudnev.org",
+      "homepage": "https://rudnev.org",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.1",
+    "illuminate/contracts": "~5.5.0|~5.6.0",
+    "illuminate/support": "~5.5.0|~5.6.0",
+    "illuminate/database": "~5.5.0|~5.6.0"
+  },
+  "require-dev": {
+    "laravel/framework": "~5.5.0|~5.6.0",
+    "mockery/mockery": "^1.0",
+    "phpunit/phpunit": "^6.1|^7.0"
+  },
+  "autoload": {
+    "files": [
+      "src/helpers.php"
+    ],
+    "psr-4": {
+      "Rudnev\\Settings\\": "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Rudnev\\Settings\\SettingsServiceProvider"
+      ],
+      "aliases": {
+        "Settings": "Rudnev\\Settings\\Facades\\SettingsFacade"
+      }
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Rudnev\\Settings\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "test": "phpunit --colors=always"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}
