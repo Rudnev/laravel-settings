@@ -245,10 +245,19 @@ class Cache
             $keys = explode('.', $key);
 
             do {
-                $key = $this->cacheKey(implode('.', $keys));
-                $this->cache->forget($key);
-                unset($index[$key]);
+                $cacheKey = $this->cacheKey(implode('.', $keys));
+                $this->cache->forget($cacheKey);
+                unset($index[$cacheKey]);
             } while (array_pop($keys) && $keys);
+
+            $cacheKey = $this->cacheKey($key);
+
+            foreach ($index as $k => $v) {
+                if (strpos($k, $cacheKey) === 0) {
+                    $this->cache->forget($k);
+                    unset($index[$k]);
+                }
+            }
 
             $this->putIndex($index);
         }
@@ -273,10 +282,19 @@ class Cache
             $keys = explode('.', $key);
 
             do {
-                $key = $this->cacheKey(implode('.', $keys));
-                $this->cache->forget($key);
-                unset($index[$key]);
+                $cacheKey = $this->cacheKey(implode('.', $keys));
+                $this->cache->forget($cacheKey);
+                unset($index[$cacheKey]);
             } while (array_pop($keys) && $keys);
+
+            $cacheKey = $this->cacheKey($key);
+
+            foreach ($index as $k => $v) {
+                if (strpos($k, $cacheKey) === 0) {
+                    $this->cache->forget($k);
+                    unset($index[$k]);
+                }
+            }
         }
 
         $this->putIndex($index);
