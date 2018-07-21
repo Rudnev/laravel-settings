@@ -233,9 +233,12 @@ class Cache implements CacheContract
             }
         }
 
-        $this->cache->put($key, $value = $callback(), $this->ttl);
+        $value = $callback();
 
-        $this->index->add($key);
+        if (! is_null($value)) {
+            $this->cache->put($key, $value, $this->ttl);
+            $this->index->add($key);
+        }
 
         $this->saveIndex();
 
@@ -256,9 +259,10 @@ class Cache implements CacheContract
             return;
         }
 
-        $this->cache->put($key = $this->cacheKey($key), $value, $this->ttl);
-
-        $this->index->add($key);
+        if (! is_null($value)) {
+            $this->cache->put($key = $this->cacheKey($key), $value, $this->ttl);
+            $this->index->add($key);
+        }
 
         $this->saveIndex();
     }
@@ -278,6 +282,10 @@ class Cache implements CacheContract
 
         foreach ($values as $key => $value) {
             unset($values[$key]);
+
+            if (is_null($value)) {
+                continue;
+            }
 
             $key = $this->cacheKey($key);
 
@@ -309,22 +317,23 @@ class Cache implements CacheContract
         if ($this->cache) {
             $keys = explode('.', $key);
 
-            $root = $keys[0];
+            $root = $this->cacheKey($keys[0]);
+
+            $deleted = [];
 
             do {
                 $cacheKey = $this->cacheKey(implode('.', $keys));
                 $this->cache->forget($cacheKey);
+                $deleted[] = $cacheKey;
             } while (array_pop($keys) && $keys);
 
-            $cacheKey = $this->cacheKey($key);
-
-            foreach ($this->index->keys($root) as $k => $v) {
-                if (strpos($k, $cacheKey.'.') === 0) {
+            foreach ($this->index->childKeys($root) as $k) {
+                if (! in_array($k, $deleted)) {
                     $this->cache->forget($k);
                 }
             }
 
-            $this->index->remove($this->cacheKey($root));
+            $this->index->remove($root);
 
             $this->saveIndex();
         }
@@ -346,22 +355,23 @@ class Cache implements CacheContract
         foreach ($keys as $key) {
             $keys = explode('.', $key);
 
-            $root = $keys[0];
+            $root = $this->cacheKey($keys[0]);
+
+            $deleted = [];
 
             do {
                 $cacheKey = $this->cacheKey(implode('.', $keys));
                 $this->cache->forget($cacheKey);
+                $deleted[] = $cacheKey;
             } while (array_pop($keys) && $keys);
 
-            $cacheKey = $this->cacheKey($key);
-
-            foreach ($this->index->keys() as $k => $v) {
-                if (strpos($k, $cacheKey.'.') === 0) {
+            foreach ($this->index->childKeys($root) as $k) {
+                if (! in_array($k, $deleted)) {
                     $this->cache->forget($k);
                 }
             }
 
-            $this->index->remove($this->cacheKey($root));
+            $this->index->remove($root);
         }
 
         $this->saveIndex();

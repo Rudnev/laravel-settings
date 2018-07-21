@@ -21,6 +21,12 @@ class CacheTest extends TestCase
 
         $repo = $this->getRepo();
         $cache = $this->getCache($repo);
+        $repo->shouldNotReceive('put')->with($pfx.'foo', m::any(), m::any());
+        $cache->put('foo', null);
+        $this->assertFalse($cache->has('foo'));
+
+        $repo = $this->getRepo();
+        $cache = $this->getCache($repo);
         $repo->shouldReceive('put')->once()->with($pfx.'foo', 'bar', m::any());
         $cache->put('foo', 'bar');
         $this->assertFalse($cache->has('bar'));
@@ -47,14 +53,10 @@ class CacheTest extends TestCase
 
         $repo = $this->getRepo();
         $cache = $this->getCache($repo);
-        $repo->shouldReceive('setMultiple')->once()->with([$pfx.'foo' => 1, $pfx.'foo.bar.baz' => 2], m::any());
-        $cache->putMultiple([
-            'foo' => 1,
-            'foo.bar.baz' => 2,
-        ]);
-        $this->assertFalse($cache->has('foo.bar'));
-        $this->assertTrue($cache->has('foo.bar.baz'));
-        $this->assertTrue($cache->has('foo'));
+        $repo->shouldNotReceive('put')->with($pfx.'foo', m::any(), m::any());
+        $this->assertEquals(null, $cache->remember('foo', function () {
+            return null;
+        }));
 
         $repo = $this->getRepo();
         $cache = $this->getCache($repo);
@@ -62,6 +64,24 @@ class CacheTest extends TestCase
         $this->assertEquals('bar', $cache->remember('foo', function () {
             return 'bar';
         }));
+    }
+
+    public function testMultipleItemsCanBeSet()
+    {
+        $pfx = self::PFX;
+
+        $repo = $this->getRepo();
+        $cache = $this->getCache($repo);
+        $repo->shouldReceive('setMultiple')->once()->with([$pfx.'foo' => 1, $pfx.'foo.bar.baz' => 2], m::any());
+        $cache->putMultiple([
+            'foo' => 1,
+            'foo.bar.baz' => 2,
+            'qux' => null
+        ]);
+        $this->assertFalse($cache->has('foo.bar'));
+        $this->assertTrue($cache->has('foo.bar.baz'));
+        $this->assertTrue($cache->has('foo'));
+        $this->assertFalse($cache->has('qux'));
     }
 
     public function testItemCanBeRetrieved()
@@ -80,6 +100,18 @@ class CacheTest extends TestCase
 
         $repo->shouldReceive('get')->once()->with($pfx.'foo.bar.baz')->andReturn(2);
         $this->assertEquals(2, $cache->get('foo.bar.baz'));
+    }
+
+    public function testMultipleItemsCanBeRetrieved()
+    {
+        $pfx = self::PFX;
+
+        $repo = $this->getRepo();
+        $cache = $this->getCache($repo);
+        $cache->putMultiple([
+            'foo' => 1,
+            'foo.bar.baz' => 2,
+        ]);
 
         $repo->shouldReceive('getMultiple')->once()->with([$pfx.'foo', $pfx.'foo.bar.baz', $pfx.'qux'])->andReturn([
             $pfx.'foo' => 1,
@@ -87,6 +119,18 @@ class CacheTest extends TestCase
             $pfx.'qux' => null,
         ]);
         $this->assertEquals(['foo' => 1, 'foo.bar.baz' => 2], $cache->getMultiple(['foo', 'foo.bar.baz', 'qux']));
+    }
+
+    public function testAllItemsCanBeRetrieved()
+    {
+        $pfx = self::PFX;
+
+        $repo = $this->getRepo();
+        $cache = $this->getCache($repo);
+        $cache->putMultiple([
+            'foo' => 1,
+            'foo.bar.baz' => 2,
+        ]);
 
         $repo->shouldReceive('getMultiple')->once()->with([$pfx.'foo', $pfx.'foo.bar.baz'])->andReturn([
             $pfx.'foo' => 1,
@@ -97,6 +141,8 @@ class CacheTest extends TestCase
 
     public function testItemCanBeRemoved()
     {
+        $pfx = self::PFX;
+
         $repo = $this->getRepo();
         $cache = $this->getCache($repo);
         $cache->putMultiple([
@@ -108,19 +154,32 @@ class CacheTest extends TestCase
             'qux.pax.fax' => 6,
         ]);
 
+        $repo->shouldReceive('forget')->once()->with($pfx.'foo');
+        $repo->shouldReceive('forget')->once()->with($pfx.'foo.bar.baz');
         $cache->forget('foo');
         $this->assertFalse($cache->has('foo'));
         $this->assertFalse($cache->has('foo.bar.baz'));
         $this->assertTrue($cache->has('products'));
         $this->assertTrue($cache->has('products.desk.price'));
 
+        $repo->shouldReceive('forget')->once()->with($pfx.'products');
+        $repo->shouldReceive('forget')->once()->with($pfx.'products.desk');
+        $repo->shouldReceive('forget')->once()->with($pfx.'products.desk.price');
         $cache->forget('products.desk');
         $this->assertFalse($cache->has('products'));
         $this->assertFalse($cache->has('products.desk.price'));
 
+        $repo->shouldReceive('forget')->once()->with($pfx.'qux');
+        $repo->shouldReceive('forget')->once()->with($pfx.'qux.pax');
+        $repo->shouldReceive('forget')->once()->with($pfx.'qux.pax.fax');
         $cache->forget('qux.pax.fax');
-        $this->assertFalse($cache->has('qux'));
+        $this->assertFalse($cache->has('qux.pax'));
         $this->assertFalse($cache->has('qux.pax.fax'));
+    }
+
+    public function testMultipleItemsCanBeRemoved()
+    {
+        $pfx = self::PFX;
 
         $repo = $this->getRepo();
         $cache = $this->getCache($repo);
@@ -134,6 +193,12 @@ class CacheTest extends TestCase
             'bar' => 7,
         ]);
 
+        $repo->shouldReceive('forget')->once()->with($pfx.'foo');
+        $repo->shouldReceive('forget')->once()->with($pfx.'foo.bar.baz');
+        $repo->shouldReceive('forget')->once()->with($pfx.'products');
+        $repo->shouldReceive('forget')->once()->with($pfx.'products.desk.price');
+        $repo->shouldReceive('forget')->once()->with($pfx.'qux.pax');
+        $repo->shouldReceive('forget')->once()->with($pfx.'qux.pax.fax');
         $cache->forgetMultiple(['foo', 'products.desk', 'qux.pax.fax']);
         $this->assertFalse($cache->has('foo'));
         $this->assertFalse($cache->has('foo.bar.baz'));
