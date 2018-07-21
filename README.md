@@ -1,6 +1,9 @@
 ## Laravel Settings
 
-Persistent settings for Laravel Framework
+
+[![Build Status](https://travis-ci.org/Rudnev/laravel-settings.svg?branch=master)](https://travis-ci.org/Rudnev/laravel-settings)
+
+Persistent settings for Laravel Framework 
 
 + Easy to Use
 + Events
