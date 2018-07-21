@@ -6,6 +6,7 @@ use Closure;
 use InvalidArgumentException;
 use Illuminate\Contracts\Cache\Factory as CacheFactoryContract;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Rudnev\Settings\Cache\Cache;
 use Rudnev\Settings\Contracts\StoreContract;
 use Rudnev\Settings\Contracts\FactoryContract;
 use Rudnev\Settings\Stores\ArrayStore;
@@ -152,7 +153,7 @@ class SettingsManager implements FactoryContract
      * Make a Cache instance.
      *
      * @param $config
-     * @return \Rudnev\Settings\Cache
+     * @return \Rudnev\Settings\Cache\Cache
      */
     protected function makeCache($config)
     {

@@ -4,7 +4,7 @@ namespace Rudnev\Settings\Tests\Unit;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Rudnev\Settings\Cache;
+use Rudnev\Settings\Cache\Cache;
 use Rudnev\Settings\Events\AllSettingsReceived;
 use Rudnev\Settings\Events\AllSettingsRemoved;
 use Rudnev\Settings\Events\PropertyMissed;

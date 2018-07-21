@@ -1,12 +1,13 @@
 <?php
 
-namespace Rudnev\Settings;
+namespace Rudnev\Settings\Cache;
 
 use Closure;
-use Illuminate\Contracts\Cache\Repository as CacheContract;
+use Illuminate\Contracts\Cache\Repository as CacheStore;
 use Psr\SimpleCache\InvalidArgumentException;
+use Rudnev\Settings\Contracts\CacheContract;
 
-class Cache
+class Cache implements CacheContract
 {
     /**
      * The cache repository implementation.
@@ -14,6 +15,13 @@ class Cache
      * @var \Illuminate\Contracts\Cache\Repository
      */
     protected $cache;
+
+    /**
+     * The cache index instance.
+     *
+     * @var \Rudnev\Settings\Cache\CacheIndex
+     */
+    protected $index;
 
     /**
      * The time to life of the cache items.
@@ -48,7 +56,7 @@ class Cache
     {
         $this->ttl = $ttl;
         $this->prefix = $prefix;
-        $this->indexKey = '_'.$prefix.'cached-items';
+        $this->indexKey = '_'.$prefix.'index';
     }
 
     /**
@@ -68,63 +76,70 @@ class Cache
      *
      * @return void
      */
-    public function setCacheRepository(CacheContract $cache)
+    public function setCacheRepository(CacheStore $cache)
     {
         $this->cache = $cache;
+
+        $this->makeIndex();
     }
 
     /**
-     * Retrieve list of cached items
+     * Make the cache index.
      *
-     * @return iterable
+     * @return void
      */
-    protected function getIndex()
+    protected function makeIndex()
     {
-        return $this->cache->get($this->indexKey) ?? [];
+        $this->index = $this->cache->get($this->indexKey) ?? new CacheIndex();
     }
 
     /**
-     * Store list of cached items
+     * Store the cache index.
      *
-     * @param iterable $index
+     * return void
      */
-    protected function putIndex($index)
+    protected function saveIndex()
     {
-        $this->cache->put($this->indexKey, $index, $this->ttl);
+        $this->cache->put($this->indexKey, $this->index, $this->ttl);
     }
 
     /**
-     * Get an item from the cache, or store the default value.
+     * Remove the cache index.
      *
-     * @param string $key
-     * @param Closure $callback
+     * return void
+     */
+    protected function forgetIndex()
+    {
+        $this->index->clear();
+        $this->cache->forget($this->indexKey);
+    }
+
+    /**
+     * Determine if an item exists in the cache store.
+     *
+     * @param  string $key
+     *
+     * @return bool
+     */
+    public function has($key)
+    {
+        return $this->cache ? $this->index->has($this->cacheKey($key)) : false;
+    }
+
+    /**
+     * Retrieve an item from the cache store by key.
+     *
+     * @param  string $key
      *
      * @return mixed
      */
-    public function remember($key, Closure $callback)
+    public function get($key)
     {
-        if (isset($this->cache)) {
-            $index = $this->getIndex();
-
-            $value = $this->cache->get($key = $this->cacheKey($key));
-
-            // If the item exists in the cache and present in the index, we return it,
-            // otherwise we write a new value from the callback function.
-            if (! is_null($value) && $inIndex = array_key_exists($key, $index)) {
-                return $value;
-            }
-
-            $this->cache->put($key, $value = $callback(), $this->ttl);
-
-            if (isset($inIndex) && ! $inIndex || ! array_key_exists($key, $index)) {
-                $index[$key] = null;
-                $this->putIndex($index);
-            }
-
-            return $value;
+        if ($this->cache && $this->index->has($key = $this->cacheKey($key))) {
+            return $this->cache->get($key);
         }
 
-        return $callback();
+        return null;
     }
 
     /**
@@ -134,31 +149,34 @@ class Cache
      *
      * @return array
      */
-    public function getMultiple($keys)
+    public function getMultiple(iterable $keys)
     {
-        if (! isset($this->cache)) {
+        if (! $this->cache) {
             return [];
         }
 
-        $index = $this->getIndex();
+        $keys = array_map([$this, 'cacheKey'], $keys);
+
+        foreach ($keys as $key) {
+            if (! $this->index->has($this->cacheKey($key))) {
+                unset($keys[$key]);
+            }
+        }
+
+        if (! $keys) {
+            return [];
+        }
 
         try {
-            $values = $this->cache->getMultiple(array_map([$this, 'cacheKey'], $keys));
+            $values = $this->cache->getMultiple($keys);
         } catch (InvalidArgumentException $ex) {
-            $values = [];
+            return [];
         }
 
         $return = [];
 
         foreach ($values as $key => $value) {
-            // Skipping non-existing
             if (is_null($value) && ! $this->cache->has($key)) {
-                continue;
-            }
-
-            // Consistency check
-            if (! array_key_exists($key, $index)) {
-                $this->cache->forget($key);
                 continue;
             }
 
@@ -171,6 +189,60 @@ class Cache
     }
 
     /**
+     * Get all of the cache items.
+     *
+     * @return iterable
+     */
+    public function all()
+    {
+        $return = [];
+
+        try {
+            $values = $this->cache ? $this->cache->getMultiple($this->index->keys()) : [];
+        } catch (InvalidArgumentException $ex) {
+            return [];
+        }
+
+        foreach ($values as $key => $value) {
+            $return[substr($key, strlen($this->prefix))] = $value;
+            unset($values[$key]);
+        }
+
+        return $return;
+    }
+
+    /**
+     * Get an item from the cache, or store the default value.
+     *
+     * @param string $key
+     * @param Closure $callback
+     *
+     * @return mixed
+     */
+    public function remember($key, Closure $callback)
+    {
+        if (! $this->cache) {
+            return $callback();
+        }
+
+        if ($this->index->has($key = $this->cacheKey($key))) {
+            $value = $this->cache->get($key);
+
+            if (! is_null($value)) {
+                return $value;
+            }
+        }
+
+        $this->cache->put($key, $value = $callback(), $this->ttl);
+
+        $this->index->add($key);
+
+        $this->saveIndex();
+
+        return $value;
+    }
+
+    /**
      * Store an item in the cache.
      *
      * @param $key
@@ -180,18 +252,15 @@ class Cache
      */
     public function put($key, $value)
     {
-        if (! isset($this->cache)) {
+        if (! $this->cache) {
             return;
         }
 
         $this->cache->put($key = $this->cacheKey($key), $value, $this->ttl);
 
-        $index = $this->getIndex();
+        $this->index->add($key);
 
-        if (! array_key_exists($key, $index)) {
-            $index[$key] = null;
-            $this->putIndex($index);
-        }
+        $this->saveIndex();
     }
 
     /**
@@ -201,13 +270,11 @@ class Cache
      *
      * @return bool
      */
-    public function putMultiple($values)
+    public function putMultiple(iterable $values)
     {
-        if (! isset($this->cache)) {
+        if (! $this->cache) {
             return false;
         }
-
-        $index = $this->getIndex();
 
         foreach ($values as $key => $value) {
             unset($values[$key]);
@@ -216,7 +283,7 @@ class Cache
 
             $values[$key] = $value;
 
-            $index[$key] = null;
+            $this->index->add($key);
         }
 
         try {
@@ -225,7 +292,7 @@ class Cache
             return false;
         }
 
-        $this->putIndex($index);
+        $this->saveIndex();
 
         return true;
     }
@@ -239,27 +306,27 @@ class Cache
      */
     public function forget($key)
     {
-        if (isset($this->cache)) {
-            $index = $this->getIndex();
-
+        if ($this->cache) {
             $keys = explode('.', $key);
+
+            $root = $keys[0];
 
             do {
                 $cacheKey = $this->cacheKey(implode('.', $keys));
                 $this->cache->forget($cacheKey);
-                unset($index[$cacheKey]);
             } while (array_pop($keys) && $keys);
 
             $cacheKey = $this->cacheKey($key);
 
-            foreach ($index as $k => $v) {
-                if (strpos($k, $cacheKey) === 0) {
+            foreach ($this->index->keys($root) as $k => $v) {
+                if (strpos($k, $cacheKey.'.') === 0) {
                     $this->cache->forget($k);
-                    unset($index[$k]);
                 }
             }
 
-            $this->putIndex($index);
+            $this->index->remove($this->cacheKey($root));
+
+            $this->saveIndex();
         }
     }
 
@@ -270,34 +337,34 @@ class Cache
      *
      * @return void
      */
-    public function forgetMultiple($keys)
+    public function forgetMultiple(iterable $keys)
     {
         if (! isset($this->cache)) {
             return;
         }
 
-        $index = $this->getIndex();
-
         foreach ($keys as $key) {
             $keys = explode('.', $key);
+
+            $root = $keys[0];
 
             do {
                 $cacheKey = $this->cacheKey(implode('.', $keys));
                 $this->cache->forget($cacheKey);
-                unset($index[$cacheKey]);
             } while (array_pop($keys) && $keys);
 
             $cacheKey = $this->cacheKey($key);
 
-            foreach ($index as $k => $v) {
-                if (strpos($k, $cacheKey) === 0) {
+            foreach ($this->index->keys() as $k => $v) {
+                if (strpos($k, $cacheKey.'.') === 0) {
                     $this->cache->forget($k);
-                    unset($index[$k]);
                 }
             }
+
+            $this->index->remove($this->cacheKey($root));
         }
 
-        $this->putIndex($index);
+        $this->saveIndex();
     }
 
     /**
@@ -307,13 +374,15 @@ class Cache
      */
     public function flush()
     {
-        if (isset($this->cache)) {
-            try {
-                $this->cache->deleteMultiple(array_keys($this->getIndex()));
-                $this->cache->forget($this->indexKey);
-            } catch (InvalidArgumentException $ex) {
-                return false;
-            }
+        if (! $this->cache) {
+            return false;
+        }
+
+        try {
+            $this->cache->deleteMultiple($this->index->keys());
+            $this->forgetIndex();
+        } catch (InvalidArgumentException $ex) {
+            return false;
         }
 
         return true;

@@ -5,6 +5,7 @@ namespace Rudnev\Settings;
 use ArrayAccess;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Support\Traits\Macroable;
+use Rudnev\Settings\Cache\Cache;
 use Rudnev\Settings\Contracts\RepositoryContract;
 use Rudnev\Settings\Contracts\StoreContract;
 use Rudnev\Settings\Events\AllSettingsReceived;
@@ -34,7 +35,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * The settings cache instance.
      *
-     * @var \Rudnev\Settings\Cache
+     * @var \Rudnev\Settings\Cache\Cache
      */
     protected $cache;
 
@@ -49,7 +50,7 @@ class Repository implements ArrayAccess, RepositoryContract
      * Create a new settings repository instance.
      *
      * @param  \Rudnev\Settings\Contracts\StoreContract $store
-     * @param  \Rudnev\Settings\Cache $cache
+     * @param  \Rudnev\Settings\Cache\Cache $cache
      * @return void
      */
     public function __construct(StoreContract $store, Cache $cache)

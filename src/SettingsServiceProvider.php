@@ -69,7 +69,7 @@ class SettingsServiceProvider extends ServiceProvider
             FactoryContract::class,
             SettingsManager::class,
             RepositoryContract::class,
-            Repository::class
+            Repository::class,
         ];
     }
 }
