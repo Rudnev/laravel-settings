@@ -235,6 +235,10 @@ class DatabaseStore implements StoreContract
 
             $data = [$root => $this->get($root)];
 
+            if (! isset($data[$root])) {
+                return false;
+            }
+
             Arr::forget($data, [$key]);
 
             $this->set($root, $data[$root]);

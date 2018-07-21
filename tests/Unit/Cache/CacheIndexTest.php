@@ -75,6 +75,7 @@ class CacheIndexTest extends TestCase
         $this->assertEquals(['foo.bar.baz.fizz'], $index->childKeys('foo.bar'));
         $this->assertEquals(['foo.qux', 'foo.bar.baz.fizz'], $index->childKeys('foo'));
         $this->assertEquals([], $index->childKeys('buz'));
+        $this->assertEquals([], $index->childKeys('fish'));
     }
 
     public function testIndexCanBeCleared()
@@ -88,6 +89,17 @@ class CacheIndexTest extends TestCase
         $this->assertFalse($index->has('foo.bar.baz'));
         $this->assertFalse($index->has('buz'));
     }
+
+    public function testInvalidArguments()
+    {
+        $index = $this->getIndex();
+        $this->assertFalse($index->has(null));
+        $this->assertNull($index->add(null));
+        $this->assertEquals([], $index->keys());
+        $this->assertFalse($index->remove(null));
+        $this->assertEquals([], $index->childKeys(null));
+    }
+
 
     protected function getIndex()
     {

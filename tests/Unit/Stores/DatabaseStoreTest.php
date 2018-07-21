@@ -119,6 +119,7 @@ class DatabaseStoreTest extends TestCase
             'quz'   => 'baz',
             'norf'  => null
         ], $store->getMultiple(['foo', 'fizz', 'quz', 'norf']));
+        $this->assertEquals([], $store->getMultiple([]));
 
         // Dot syntax
 
@@ -218,8 +219,33 @@ class DatabaseStoreTest extends TestCase
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('delete')->once();
-
         $store->forget('foo');
+
+        $store = $this->getStore();
+        $table = m::mock('stdClass');
+        $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
+        $table->shouldReceive('first')->once()->andReturnNull();
+        $table->shouldNotReceive('updateOrInsert');
+        $table->shouldNotReceive('delete');
+        $store->forget('foo.bar');
+
+        $store = $this->getStore();
+        $table = m::mock('stdClass');
+        $store->getConnection()->shouldReceive('table')->times(4)->with('table')->andReturn($table);
+        $table->shouldReceive('where')->twice()->with('key', '=', 'foo')->andReturn($table);
+        $table->shouldReceive('first')->once()->andReturn(
+            (object) ['key' => 'foo', 'value' => json_encode('fish')]
+        );
+        $table->shouldReceive('updateOrInsert')->with(['key' => 'foo'], ['value' => json_encode('fish')]);
+        $table->shouldNotReceive('delete');
+        $store->forget('foo.bar');
+        $table->shouldReceive('first')->once()->andReturn(
+            (object) ['key' => 'foo', 'value' => json_encode(['bar' => 1, 'baz' => 2])]
+        );
+        $table->shouldReceive('updateOrInsert')->with(['key' => 'foo'], ['value' => json_encode(['baz' => 2])]);
+        $table->shouldNotReceive('delete');
+        $store->forget('foo.bar');
     }
 
     public function testMultipleItemsCanBeRemoved()

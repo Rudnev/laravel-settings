@@ -15,6 +15,14 @@ class CacheTest extends TestCase
         m::close();
     }
 
+    public function testRepositoryCanSetAndRetrieved()
+    {
+        $cache = new Cache(1, self::PFX);
+        $repo = $this->getRepo();
+        $cache->setCacheRepository($repo);
+        $this->assertEquals($repo, $cache->getCacheRepository());
+    }
+
     public function testItemCanBeSet()
     {
         $pfx = self::PFX;
@@ -64,6 +72,15 @@ class CacheTest extends TestCase
         $this->assertEquals('bar', $cache->remember('foo', function () {
             return 'bar';
         }));
+
+        $repo = $this->getRepo();
+        $cache = $this->getCache($repo);
+        $cache->put('foo', 'fish');
+        $repo->shouldReceive('get')->once()->with($pfx.'foo')->andReturn('fish');
+        $repo->shouldNotReceive('put');
+        $this->assertEquals('fish', $cache->remember('foo', function () {
+            return 'bar';
+        }));
     }
 
     public function testMultipleItemsCanBeSet()
@@ -76,7 +93,7 @@ class CacheTest extends TestCase
         $cache->putMultiple([
             'foo' => 1,
             'foo.bar.baz' => 2,
-            'qux' => null
+            'qux' => null,
         ]);
         $this->assertFalse($cache->has('foo.bar'));
         $this->assertTrue($cache->has('foo.bar.baz'));
@@ -119,6 +136,7 @@ class CacheTest extends TestCase
             $pfx.'qux' => null,
         ]);
         $this->assertEquals(['foo' => 1, 'foo.bar.baz' => 2], $cache->getMultiple(['foo', 'foo.bar.baz', 'qux']));
+        $this->assertEquals([], $cache->getMultiple([]));
     }
 
     public function testAllItemsCanBeRetrieved()

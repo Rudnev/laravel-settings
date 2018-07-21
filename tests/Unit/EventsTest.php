@@ -81,6 +81,13 @@ class EventsTest extends TestCase
         $this->assertTrue($repository->flush());
     }
 
+    public function testStoreNameCanBeSetAndRetrieved()
+    {
+        $event = new PropertyWritten('foo', 'bar');
+        $event->setStoreName('foo');
+        $this->assertEquals('foo', $event->getStoreName());
+    }
+
     protected function assertEventMatches($eventClass, $properties = [])
     {
         return m::on(function ($event) use ($eventClass, $properties) {
