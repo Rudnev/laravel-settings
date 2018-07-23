@@ -42,7 +42,7 @@ class ArrayStore implements StoreContract
      */
     public function has($key)
     {
-        return Arr::has($this->storage, $key);
+        return ! is_null(Arr::get($this->storage, $key));
     }
 
     /**

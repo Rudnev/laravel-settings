@@ -67,8 +67,8 @@ class EventSubscriber
      */
     public function subscribe($events)
     {
-        $events->listen(PropertyWritten::class, __CLASS__.'@propertyWritten');
-        $events->listen(PropertyRemoved::class, __CLASS__.'@propertyRemoved');
-        $events->listen(AllSettingsRemoved::class, __CLASS__.'@allSettingsRemoved');
+        $events->listen(PropertyWritten::class, [$this, 'propertyWritten']);
+        $events->listen(PropertyRemoved::class, [$this, 'propertyRemoved']);
+        $events->listen(AllSettingsRemoved::class, [$this, 'allSettingsRemoved']);
     }
 }

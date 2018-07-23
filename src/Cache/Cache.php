@@ -78,7 +78,9 @@ class Cache extends ArrayStore implements StoreContract
     {
         $values = $this->repo->remember($this->name, $this->ttl, $callback) ?? [];
 
-        $this->setMultiple($values);
+        if (is_array($values)) {
+            $this->storage = $values;
+        }
     }
 
     /**

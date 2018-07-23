@@ -18,12 +18,11 @@ class EventSubscriberTest extends TestCase
 
     public function testSubscribe()
     {
-        $class = EventSubscriber::class;
-        $subscriber = new $class($this->getCache());
+        $subscriber = new EventSubscriber($this->getCache());
         $dispatcher = m::spy('Illuminate\Events\Dispatcher');
-        $dispatcher->shouldReceive('listen')->with(PropertyWritten::class, $class.'@propertyWritten');
-        $dispatcher->shouldReceive('listen')->with(PropertyRemoved::class, $class.'@propertyWritten');
-        $dispatcher->shouldReceive('listen')->with(AllSettingsRemoved::class, $class.'@propertyWritten');
+        $dispatcher->shouldReceive('listen')->with(PropertyWritten::class, [$subscriber, 'propertyWritten']);
+        $dispatcher->shouldReceive('listen')->with(PropertyRemoved::class, [$subscriber, 'propertyWritten']);
+        $dispatcher->shouldReceive('listen')->with(AllSettingsRemoved::class, [$subscriber, 'propertyWritten']);
         $subscriber->subscribe($dispatcher);
     }
 
