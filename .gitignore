@@ -2,6 +2,7 @@
 .idea
 .vscode
 composer.lock
+coverage
 docker
 docker-compose.yml
 phpunit.xml

@@ -84,10 +84,10 @@ class DatabaseStore implements StoreContract
         $keys = explode('.', $key);
 
         if (count($keys) > 1) {
-            return (bool) $this->get($key);
+            return ! is_null($this->get($key));
         }
 
-        return $this->table()->where($this->keyColumn, '=', $key)->exists();
+        return $this->table()->where($this->keyColumn, '=', $key)->whereNotNull($this->valueColumn)->exists();
     }
 
     /**

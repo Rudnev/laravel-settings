@@ -5,13 +5,6 @@ namespace Rudnev\Settings\Contracts;
 interface RepositoryContract
 {
     /**
-     * Get the settings store implementation.
-     *
-     * @return \Rudnev\Settings\Contracts\StoreContract
-     */
-    public function getStore();
-
-    /**
      * Determine if an item exists in the settings store.
      *
      * @param  string $key

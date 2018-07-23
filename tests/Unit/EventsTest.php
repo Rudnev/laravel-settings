@@ -4,7 +4,6 @@ namespace Rudnev\Settings\Tests\Unit;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Rudnev\Settings\Cache\Cache;
 use Rudnev\Settings\Events\AllSettingsReceived;
 use Rudnev\Settings\Events\AllSettingsRemoved;
 use Rudnev\Settings\Events\PropertyMissed;
@@ -21,18 +20,6 @@ class EventsTest extends TestCase
         m::close();
     }
 
-    public function testHasTriggersEvents()
-    {
-        $dispatcher = $this->getDispatcher();
-        $repository = $this->getRepository($dispatcher);
-
-        $dispatcher->shouldReceive('dispatch')->once()->with($this->assertEventMatches(PropertyMissed::class, ['key' => 'foo']));
-        $this->assertFalse($repository->has('foo'));
-
-        $dispatcher->shouldReceive('dispatch')->once()->with($this->assertEventMatches(PropertyReceived::class, ['key' => 'baz', 'value' => 'qux']));
-        $this->assertTrue($repository->has('baz'));
-    }
-
     public function testGetTriggersEvents()
     {
         $dispatcher = $this->getDispatcher();
@@ -41,7 +28,10 @@ class EventsTest extends TestCase
         $dispatcher->shouldReceive('dispatch')->once()->with($this->assertEventMatches(PropertyMissed::class, ['key' => 'foo']));
         $this->assertNull($repository->get('foo'));
 
-        $dispatcher->shouldReceive('dispatch')->once()->with($this->assertEventMatches(PropertyReceived::class, ['key' => 'baz', 'value' => 'qux']));
+        $dispatcher->shouldReceive('dispatch')->once()->with($this->assertEventMatches(PropertyReceived::class, [
+            'key' => 'baz',
+            'value' => 'qux',
+        ]));
         $this->assertEquals('qux', $repository->get('baz'));
     }
 
@@ -51,7 +41,7 @@ class EventsTest extends TestCase
         $repository = $this->getRepository($dispatcher);
 
         $dispatcher->shouldReceive('dispatch')->once()->with($this->assertEventMatches(AllSettingsReceived::class));
-        $this->assertEquals(['baz' => 'qux'] , $repository->all());
+        $this->assertEquals(['baz' => 'qux'], $repository->all());
     }
 
     public function testSetTriggersEvents()
@@ -59,7 +49,10 @@ class EventsTest extends TestCase
         $dispatcher = $this->getDispatcher();
         $repository = $this->getRepository($dispatcher);
 
-        $dispatcher->shouldReceive('dispatch')->once()->with($this->assertEventMatches(PropertyWritten::class, ['key' => 'foo', 'value' => 'bar']));
+        $dispatcher->shouldReceive('dispatch')->once()->with($this->assertEventMatches(PropertyWritten::class, [
+            'key' => 'foo',
+            'value' => 'bar',
+        ]));
         $repository->set('foo', 'bar');
     }
 
@@ -112,7 +105,7 @@ class EventsTest extends TestCase
 
     protected function getRepository($dispatcher)
     {
-        $repository = new Repository(new ArrayStore(), new Cache());
+        $repository = new Repository(new ArrayStore());
         $repository->set('baz', 'qux');
         $repository->setEventDispatcher($dispatcher);
 

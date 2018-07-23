@@ -72,24 +72,6 @@ Publish [the migration](database/migrations/create_settings_table.stub) with:
 php artisan vendor:publish --provider="Rudnev\Settings\SettingsServiceProvider" --tag="migrations"
 ```
 
-If you're using a database with JSON support (such as MySQL >= 5.7 or PostgreSQL) you can update the `create_settings_tables.php` migration and replace: 
-
-```php
-$table->text($this->value)->nullable();
-```
-
-with:
-
-```php
-$table->json($this->value)->nullable();
-```
-
-or replace with the `jsonb` (preferably if supported):
-
-```php
-$table->jsonb($this->value)->nullable();
-```
-
 After the migration has been published you can create the settings table by running the migrations:
 
 ```bash
@@ -198,7 +180,7 @@ class MongoStore implements StoreContract {
 After that, to register a new settings driver named "mongo", you would do the following:
 
 ```php
-Settings::extend('mongo', function($app)
+Settings::extend('mongo', function($app, $storeName, $config)
 {
     return Settings::repository(new MongoStore);
 });

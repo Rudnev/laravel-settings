@@ -26,21 +26,21 @@ class Repository implements ArrayAccess, RepositoryContract
     }
 
     /**
-     * The settings store implementation.
+     * The settings store instance.
      *
      * @var \Rudnev\Settings\Contracts\StoreContract
      */
     protected $store;
 
     /**
-     * The settings cache instance.
+     * The cache instance.
      *
      * @var \Rudnev\Settings\Cache\Cache
      */
     protected $cache;
 
     /**
-     * The event dispatcher implementation.
+     * The event dispatcher instance.
      *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
@@ -50,23 +50,78 @@ class Repository implements ArrayAccess, RepositoryContract
      * Create a new settings repository instance.
      *
      * @param  \Rudnev\Settings\Contracts\StoreContract $store
-     * @param  \Rudnev\Settings\Cache\Cache $cache
      * @return void
      */
-    public function __construct(StoreContract $store, Cache $cache)
+    public function __construct(StoreContract $store)
     {
         $this->store = $store;
-        $this->cache = $cache;
     }
 
     /**
-     * Get the settings store implementation.
+     * Get the settings store instance.
      *
      * @return \Rudnev\Settings\Contracts\StoreContract
      */
     public function getStore()
     {
         return $this->store;
+    }
+
+    /**
+     * Set the settings store implementation.
+     *
+     * @param \Rudnev\Settings\Contracts\StoreContract $store
+     * @return void
+     */
+    public function setStore(StoreContract $store)
+    {
+        $this->store = $store;
+    }
+
+    /**
+     * Get the cache instance.
+     *
+     * @return \Rudnev\Settings\Cache\Cache
+     */
+    public function getCache()
+    {
+        return $this->cache;
+    }
+
+    /**
+     * Set the cache instance.
+     *
+     * @param \Rudnev\Settings\Cache\Cache $cache
+     * @return void
+     */
+    public function setCache(Cache $cache)
+    {
+        $cache->load(function () {
+            return $this->store->all();
+        });
+
+        $this->cache = $cache;
+    }
+
+    /**
+     * Get the event dispatcher instance.
+     *
+     * @return  \Illuminate\Contracts\Events\Dispatcher $dispatcher
+     */
+    public function getEventDispatcher()
+    {
+        return $this->events;
+    }
+
+    /**
+     * Set the event dispatcher implementation.
+     *
+     * @param  \Illuminate\Contracts\Events\Dispatcher $dispatcher
+     * @return void
+     */
+    public function setEventDispatcher(DispatcherContract $dispatcher)
+    {
+        $this->events = $dispatcher;
     }
 
     /**
@@ -77,7 +132,7 @@ class Repository implements ArrayAccess, RepositoryContract
      */
     public function has($key)
     {
-        return ! is_null($this->get($key));
+        return $this->data()->has($key);
     }
 
     /**
@@ -93,11 +148,7 @@ class Repository implements ArrayAccess, RepositoryContract
             return $this->getMultiple($key);
         }
 
-        $get = function () use ($key) {
-            return $this->store->get($this->itemKey($key));
-        };
-
-        $value = $this->cache->remember($this->itemKey($key), $get);
+        $value = $this->data()->get($key);
 
         // If we could not find the settings value, we will fire the missed event and get
         // the default value for this settings value. This default could be a callback
@@ -127,17 +178,9 @@ class Repository implements ArrayAccess, RepositoryContract
             return is_string($key) ? $key : $value;
         })->values()->all();
 
-        $cachedValues = $this->cache->getMultiple($keyList);
+        $values = $this->data()->getMultiple($keyList);
 
-        $values = $this->store->getMultiple(array_diff($keyList, array_keys($cachedValues)));
-
-        $values = array_merge($cachedValues, $values);
-
-        return collect($values)->map(function ($value, $key) use ($keys, $cachedValues) {
-            if (! isset($cachedValues[$key])) {
-                $this->cache->put($key, $value);
-            }
-
+        return collect($values)->map(function ($value, $key) use ($keys) {
             if (is_null($value)) {
                 $this->event(new PropertyMissed($key));
 
@@ -157,9 +200,7 @@ class Repository implements ArrayAccess, RepositoryContract
      */
     public function all()
     {
-        $data = $this->store->all();
-
-        $this->cache->putMultiple($data);
+        $data = $this->data()->all();
 
         $this->event(new AllSettingsReceived());
 
@@ -179,9 +220,7 @@ class Repository implements ArrayAccess, RepositoryContract
             return $this->setMultiple($key);
         }
 
-        $this->store->set($this->itemKey($key), $value);
-
-        $this->cache->forget($this->itemKey($key));
+        $this->store->set($key, $value);
 
         $this->event(new PropertyWritten($key, $value));
 
@@ -197,8 +236,6 @@ class Repository implements ArrayAccess, RepositoryContract
     protected function setMultiple(iterable $values)
     {
         $this->store->setMultiple($values);
-
-        $this->cache->forgetMultiple(array_keys($values));
 
         foreach ($values as $key => $value) {
             $this->event(new PropertyWritten($key, $value));
@@ -219,9 +256,7 @@ class Repository implements ArrayAccess, RepositoryContract
             return $this->forgetMultiple($key);
         }
 
-        $success = $this->store->forget($this->itemKey($key));
-
-        $this->cache->forget($this->itemKey($key));
+        $success = $this->store->forget($key);
 
         if ($success) {
             $this->event(new PropertyRemoved($key));
@@ -240,8 +275,6 @@ class Repository implements ArrayAccess, RepositoryContract
     {
         $success = $this->store->forgetMultiple($keys);
 
-        $this->cache->forgetMultiple($keys);
-
         if ($success) {
             foreach ($keys as $key) {
                 $this->event(new PropertyRemoved($key));
@@ -258,8 +291,6 @@ class Repository implements ArrayAccess, RepositoryContract
      */
     public function flush()
     {
-        $this->cache->flush();
-
         $success = $this->store->flush();
 
         if ($success) {
@@ -270,14 +301,13 @@ class Repository implements ArrayAccess, RepositoryContract
     }
 
     /**
-     * Format the key for a settings item.
+     * Get the cache if it's enabled, otherwise the settings store.
      *
-     * @param  string $key
-     * @return string
+     * @return \Rudnev\Settings\Contracts\StoreContract
      */
-    protected function itemKey($key)
+    protected function data()
     {
-        return $key;
+        return $this->cache ?? $this->store;
     }
 
     /**
@@ -297,17 +327,6 @@ class Repository implements ArrayAccess, RepositoryContract
         }
 
         $this->events->dispatch($event);
-    }
-
-    /**
-     * Set the event dispatcher instance.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher $dispatcher
-     * @return void
-     */
-    public function setEventDispatcher(DispatcherContract $dispatcher)
-    {
-        $this->events = $dispatcher;
     }
 
     /**
@@ -379,5 +398,13 @@ class Repository implements ArrayAccess, RepositoryContract
     public function __clone()
     {
         $this->store = clone $this->store;
+
+        if (is_object($this->cache)) {
+            $this->cache = clone $this->cache;
+        }
+
+        if (is_object($this->events)) {
+            $this->events = clone $this->events;
+        }
     }
 }

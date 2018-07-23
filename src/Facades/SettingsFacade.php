@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void set(string $key, mixed $value)
  * @method static bool forget(string $key)
  * @method static bool flush()
- * @method static \Rudnev\Settings\Contracts\StoreContract getStore()
  * @method static \Rudnev\Settings\Contracts\RepositoryContract store()
- * @method static \Rudnev\Settings\Repository repository(\Rudnev\Settings\Contracts\StoreContract $store, array $config)
  * @method static \Rudnev\Settings\SettingsManager extend(string $driver, \Closure $callback)
  * @see \Rudnev\Settings\SettingsManager
  * @see \Rudnev\Settings\Repository

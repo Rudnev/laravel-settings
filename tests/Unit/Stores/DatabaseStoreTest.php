@@ -29,6 +29,7 @@ class DatabaseStoreTest extends TestCase
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
+        $table->shouldReceive('whereNotNull')->andReturn($table);
         $table->shouldReceive('exists')->once()->andReturn(true);
         $this->assertTrue($store->has('foo'));
 
@@ -49,6 +50,7 @@ class DatabaseStoreTest extends TestCase
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'buz')->andReturn($table);
+        $table->shouldReceive('whereNotNull')->andReturn($table);
         $table->shouldReceive('exists')->once()->andReturn(false);
         $this->assertFalse($store->has('buz'));
 

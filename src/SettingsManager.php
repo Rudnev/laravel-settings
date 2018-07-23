@@ -3,12 +3,15 @@
 namespace Rudnev\Settings;
 
 use Closure;
-use InvalidArgumentException;
 use Illuminate\Contracts\Cache\Factory as CacheFactoryContract;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Rudnev\Settings\Cache\Cache;
-use Rudnev\Settings\Contracts\StoreContract;
+use Rudnev\Settings\Cache\EventSubscriber;
 use Rudnev\Settings\Contracts\FactoryContract;
+use Rudnev\Settings\Contracts\StoreContract;
 use Rudnev\Settings\Stores\ArrayStore;
 use Rudnev\Settings\Stores\DatabaseStore;
 
@@ -25,13 +28,6 @@ class SettingsManager implements FactoryContract
     protected $app;
 
     /**
-     * The array of resolved settings stores.
-     *
-     * @var \Rudnev\Settings\Contracts\RepositoryContract[]
-     */
-    protected $stores = [];
-
-    /**
      * The registered custom driver creators.
      *
      * @var array
@@ -39,7 +35,14 @@ class SettingsManager implements FactoryContract
     protected $customCreators = [];
 
     /**
-     * Create a new Settings manager instance.
+     * The array of created stores.
+     *
+     * @var array
+     */
+    protected $stores = [];
+
+    /**
+     * Create a new manager instance.
      *
      * @param  \Illuminate\Foundation\Application $app
      * @return void
@@ -50,124 +53,134 @@ class SettingsManager implements FactoryContract
     }
 
     /**
-     * Get a settings repository instance by name.
+     * Get a repository instance.
      *
-     * @param  string|null $name
-     * @return \Rudnev\Settings\Contracts\RepositoryContract
+     * @param  string $name
+     * @return mixed
+     *
+     * @throws \InvalidArgumentException
      */
     public function store($name = null)
     {
-        $name = $name ?: $this->app['config']['settings.default'];
+        $name = $name ?: $this->getDefaultStore();
+
+        if (is_null($name)) {
+            throw new InvalidArgumentException(sprintf('Unable to resolve NULL store for [%s].', static::class));
+        }
 
         if (! isset($this->stores[$name])) {
-            $this->stores[$name] = $this->resolve($name);
-            $this->stores[$name]->getStore()->setName($name);
+            $this->stores[$name] = $this->createStore($name);
         }
 
         return $this->stores[$name];
     }
 
     /**
-     * Resolve the given store.
+     * Get the default store name.
+     *
+     * @return string
+     */
+    public function getDefaultStore()
+    {
+        return $this->getConfig('default');
+    }
+
+    /**
+     * Create a new store instance.
      *
      * @param  string $name
-     * @return \Rudnev\Settings\Contracts\RepositoryContract
+     * @return mixed
      *
      * @throws \InvalidArgumentException
      */
-    protected function resolve($name)
+    protected function createStore($name)
     {
-        $config = $this->getConfig($name);
+        $config = $this->getConfig("stores.$name");
 
         if (is_null($config)) {
-            throw new InvalidArgumentException("Settings store [{$name}] is not defined.");
+            throw new InvalidArgumentException("Store [{$name}] is not defined.");
         }
 
-        if (isset($this->customCreators[$config['driver']])) {
-            return $this->callCustomCreator($config);
+        $driver = $config['driver'] ?? null;
+
+        if (isset($this->customCreators[$driver])) {
+            return $this->callCustomCreator($driver, $name, $config);
+        } else {
+            $method = 'create'.Str::studly($driver).'Store';
+
+            if (method_exists($this, $method)) {
+                return $this->$method($name, $config);
+            }
         }
 
-        $driverMethod = 'create'.ucfirst($config['driver']).'Driver';
-
-        if (! method_exists($this, $driverMethod)) {
-            throw new InvalidArgumentException("Driver [{$config['driver']}] is not supported.");
-        }
-
-        return $this->{$driverMethod}($config);
+        throw new InvalidArgumentException("Driver [$driver] not supported.");
     }
 
     /**
      * Call a custom driver creator.
      *
+     * @param  string $driver
+     * @param  string $storeName
      * @param  array $config
      * @return mixed
      */
-    protected function callCustomCreator(array $config)
+    protected function callCustomCreator($driver, $storeName, $config)
     {
-        return $this->customCreators[$config['driver']]($this->app, $config);
+        return $this->customCreators[$driver]($this->app, $storeName, $config);
     }
 
     /**
-     * Create an instance of the array settings driver.
+     * Create an instance of the array store.
      *
+     * @param string $name
      * @param  array $config
      * @return \Rudnev\Settings\Repository
      */
-    protected function createArrayDriver(array $config)
+    protected function createArrayStore($name, array $config)
     {
-        return $this->repository(new ArrayStore, $config);
+        $store = new ArrayStore();
+
+        $store->setName($name);
+
+        return $this->repository($store);
     }
 
     /**
-     * Create an instance of the database settings driver.
+     * Create an instance of the database store.
      *
+     * @param string $name
      * @param  array $config
      * @return \Rudnev\Settings\Repository
      */
-    protected function createDatabaseDriver(array $config)
+    protected function createDatabaseStore($name, array $config)
     {
         $connection = $this->app['db']->connection($config['connection'] ?? null);
 
         $store = new DatabaseStore($connection, $config['table'], $config['key_column'], $config['value_column']);
 
-        return $this->repository($store, $config);
+        $store->setName($name);
+
+        $cache = $this->makeCache($config['cache'] ?? null);
+
+        return $this->repository($store, $cache);
     }
 
     /**
      * Create a new settings repository with the given implementation.
      *
      * @param  \Rudnev\Settings\Contracts\StoreContract $store
-     * @param  array $config
+     * @param  \Rudnev\Settings\Cache\Cache
      * @return \Rudnev\Settings\Repository
      */
-    public function repository(StoreContract $store, array $config)
+    public function repository(StoreContract $store, Cache $cache = null)
     {
-        $repository = new Repository($store, $this->makeCache($config));
+        $repository = new Repository($store);
 
         $this->addEventDispatcher($repository);
 
+        $this->addCache($repository, $cache);
+
         return $repository;
-    }
-
-    /**
-     * Make a Cache instance.
-     *
-     * @param $config
-     * @return \Rudnev\Settings\Cache\Cache
-     */
-    protected function makeCache($config)
-    {
-        if (empty($config['cache']['enabled']) || ! $this->app->bound(CacheFactoryContract::class)) {
-            return new Cache();
-        }
-
-        $cacheManager = $this->app[CacheFactoryContract::class];
-
-        $cache = new Cache($config['cache']['ttl']);
-
-        $cache->setCacheRepository($cacheManager->store($config['cache']['store'] ?? null));
-
-        return $cache;
     }
 
     /**
@@ -178,20 +191,53 @@ class SettingsManager implements FactoryContract
      */
     protected function addEventDispatcher(Repository $repository)
     {
-        if ($this->app['config']['settings.events'] && $this->app->bound(DispatcherContract::class)) {
+        if ($this->getConfig('events')) {
             $repository->setEventDispatcher($this->app[DispatcherContract::class]);
+        } else {
+            $repository->setEventDispatcher(new Dispatcher());
         }
     }
 
     /**
-     * Get the settings connection configuration.
+     * Set the cache instance to the settings repository.
      *
-     * @param  string $name
-     * @return array
+     * @param \Rudnev\Settings\Repository $repository
+     * @param  \Rudnev\Settings\Cache\Cache $cache
+     * @return void
      */
-    protected function getConfig($name)
+    protected function addCache(Repository $repository, Cache $cache = null)
     {
-        return $this->app['config']["settings.stores.{$name}"];
+        if ($cache) {
+            $repository->setCache($cache);
+
+            $repository->getEventDispatcher()->subscribe(new EventSubscriber($cache));
+        }
+    }
+
+    /**
+     * Make a cache instance.
+     *
+     * @param array $config
+     * @return \Rudnev\Settings\Cache\Cache|null
+     */
+    protected function makeCache(array $config = [])
+    {
+        if (! empty($config['enabled'])) {
+            $repo = $this->app[CacheFactoryContract::class]->store($config['store'] ?? null);
+
+            return new Cache($repo, $config['ttl'] ?? null);
+        }
+    }
+
+    /**
+     * Get the settings configuration.
+     *
+     * @param  string $key
+     * @return mixed
+     */
+    protected function getConfig($key)
+    {
+        return $this->app['config']["settings.$key"];
     }
 
     /**
@@ -203,13 +249,13 @@ class SettingsManager implements FactoryContract
      */
     public function extend($driver, Closure $callback)
     {
-        $this->customCreators[$driver] = $callback->bindTo($this, $this);
+        $this->customCreators[$driver] = $callback;
 
         return $this;
     }
 
     /**
-     * Dynamically call the default driver instance.
+     * Dynamically call the default store instance.
      *
      * @param  string $method
      * @param  array $parameters

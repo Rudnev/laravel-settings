@@ -2,13 +2,13 @@
 
 namespace Rudnev\Settings;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as BaseProvider;
 use Rudnev\Settings\Contracts\FactoryContract;
 use Rudnev\Settings\Contracts\RepositoryContract;
 use Rudnev\Settings\Repository;
 use Rudnev\Settings\SettingsManager;
 
-class SettingsServiceProvider extends ServiceProvider
+class ServiceProvider extends BaseProvider
 {
     /**
      * Indicates if loading of the provider is deferred.

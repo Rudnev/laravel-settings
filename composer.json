@@ -19,12 +19,13 @@
   "require": {
     "php": ">=7.1",
     "illuminate/contracts": "~5.5.0|~5.6.0",
-    "illuminate/support": "~5.5.0|~5.6.0",
-    "illuminate/database": "~5.5.0|~5.6.0"
+    "illuminate/database": "~5.5.0|~5.6.0",
+    "illuminate/events": "~5.5.0|~5.6.0",
+    "illuminate/support": "~5.5.0|~5.6.0"
   },
   "require-dev": {
-    "laravel/framework": "~5.5.0|~5.6.0",
     "mockery/mockery": "^1.0",
+    "orchestra/testbench": "^3.6",
     "phpunit/phpunit": "^6.1|^7.0"
   },
   "autoload": {
@@ -38,7 +39,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Rudnev\\Settings\\SettingsServiceProvider"
+        "Rudnev\\Settings\\ServiceProvider"
       ],
       "aliases": {
         "Settings": "Rudnev\\Settings\\Facades\\SettingsFacade"
