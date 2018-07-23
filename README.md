@@ -63,13 +63,13 @@ composer require rudnev/laravel-settings
 Publish [the config](config/settings.php) file with:
 
 ```bash
-php artisan vendor:publish --provider="Rudnev\Settings\SettingsServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Rudnev\Settings\ServiceProvider" --tag="config"
 ```
 
 Publish [the migration](database/migrations/create_settings_table.stub) with:
 
 ```bash
-php artisan vendor:publish --provider="Rudnev\Settings\SettingsServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Rudnev\Settings\ServiceProvider" --tag="migrations"
 ```
 
 After the migration has been published you can create the settings table by running the migrations:
