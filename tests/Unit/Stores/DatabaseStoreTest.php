@@ -312,7 +312,17 @@ class DatabaseStoreTest extends TestCase
             'value' => json_encode('baz'),
         ]);
         $this->assertEquals('baz', $store->get('bar'));
-        $this->assertEquals(null, $store->setScope(null));
+
+        $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('where')->once()->with('scope', 'foo')->andReturn($table);
+        $table->shouldReceive('updateOrInsert')->once()->with(['key' => 'qux'], [
+            'scope' => 'foo',
+            'value' => json_encode('pax'),
+        ]);
+        $store->set('qux', 'pax');
+
+        $store->setScope(null);
+        $this->assertEquals(null, $store->getScope());
 
         $store = $this->getStore();
         $table = m::mock('stdClass');
@@ -328,6 +338,19 @@ class DatabaseStoreTest extends TestCase
             'value' => json_encode('baz'),
         ]);
         $this->assertEquals('baz', $store->get('bar'));
+
+        $store->getConnection()->shouldReceive('table')->once()->with('settings_models')->andReturn($table);
+        $table->shouldReceive('where')->once()->with('model_id', 123)->andReturn($table);
+        $table->shouldReceive('where')->once()->with('model_type', get_class($model))->andReturn($table);
+        $table->shouldReceive('updateOrInsert')->once()->with(['key' => 'qux'], [
+            'model_id' => 123,
+            'model_type' => get_class($model),
+            'value' => json_encode('pax'),
+        ]);
+        $store->set('qux', 'pax');
+
+        $store->setScope(null);
+        $this->assertEquals(null, $store->getScope());
     }
 
     protected function getStore()

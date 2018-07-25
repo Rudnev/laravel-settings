@@ -34,7 +34,9 @@ class EventSubscriber
      */
     public function propertyWritten(PropertyWritten $event)
     {
-        $this->cache->set($event->key, $event->value);
+        if (is_null($event->getScope())) {
+            $this->cache->set($event->key, $event->value);
+        }
     }
 
     /**
@@ -45,7 +47,9 @@ class EventSubscriber
      */
     public function propertyRemoved(PropertyRemoved $event)
     {
-        $this->cache->forget($event->key);
+        if (is_null($event->getScope())) {
+            $this->cache->forget($event->key);
+        }
     }
 
     /**
@@ -56,7 +60,9 @@ class EventSubscriber
      */
     public function allSettingsRemoved(AllSettingsRemoved $event)
     {
-        $this->cache->flush();
+        if (is_null($event->getScope())) {
+            $this->cache->flush();
+        }
     }
 
     /**

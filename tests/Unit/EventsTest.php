@@ -81,6 +81,13 @@ class EventsTest extends TestCase
         $this->assertEquals('foo', $event->getStoreName());
     }
 
+    public function testScopeCanBeSetAndRetrieved()
+    {
+        $event = new PropertyWritten('foo', 'bar');
+        $event->setScope('foo');
+        $this->assertEquals('foo', $event->getScope());
+    }
+
     protected function assertEventMatches($eventClass, $properties = [])
     {
         return m::on(function ($event) use ($eventClass, $properties) {

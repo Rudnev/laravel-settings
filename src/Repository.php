@@ -374,6 +374,7 @@ class Repository implements ArrayAccess, RepositoryContract
 
         if ($event instanceof StoreEvent) {
             $event->setStoreName($this->store->getName());
+            $event->setScope($this->scope);
         }
 
         $this->events->dispatch($event);

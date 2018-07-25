@@ -274,7 +274,16 @@ class DatabaseStore implements StoreContract
 
         $value = $this->pack($value);
 
-        $this->table()->updateOrInsert([$this->keyColumn => $key], [$this->valueColumn => $value]);
+        $values = [$this->valueColumn => $value];
+
+        if (is_string($this->scope)) {
+            $values[$this->scopeColumn] = $this->scope;
+        } elseif (is_object($this->scope) && method_exists($this->scope, 'getKey')) {
+            $values[$this->morphId] = $this->scope->getKey();
+            $values[$this->morphType] = get_class($this->scope);
+        }
+
+        $this->table()->updateOrInsert([$this->keyColumn => $key], $values);
     }
 
     /**
