@@ -29,6 +29,7 @@ class DatabaseStoreTest extends TestCase
         $table = m::mock('stdClass');
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('whereNotNull')->andReturn($table);
         $table->shouldReceive('exists')->once()->andReturn(true);
@@ -37,6 +38,7 @@ class DatabaseStoreTest extends TestCase
         // Dot syntax
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturn((object) [
             'key' => 'products',
@@ -51,6 +53,7 @@ class DatabaseStoreTest extends TestCase
         $table = m::mock('stdClass');
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'buz')->andReturn($table);
         $table->shouldReceive('whereNotNull')->andReturn($table);
         $table->shouldReceive('exists')->once()->andReturn(false);
@@ -59,6 +62,7 @@ class DatabaseStoreTest extends TestCase
         // Dot syntax
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturnNull();
         $this->assertFalse($store->has('products.desk.price'));
@@ -70,6 +74,7 @@ class DatabaseStoreTest extends TestCase
 
         $table = m::mock('stdClass');
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturn(null);
         $this->assertNull($store->get('foo'));
@@ -77,6 +82,7 @@ class DatabaseStoreTest extends TestCase
         // Dot syntax
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturn((object) [
             'key' => 'products',
@@ -91,6 +97,7 @@ class DatabaseStoreTest extends TestCase
         $table = m::mock('stdClass');
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturn((object) ['value' => json_encode('bar')]);
 
@@ -99,6 +106,7 @@ class DatabaseStoreTest extends TestCase
         // Dot syntax
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturn((object) [
             'key' => 'products',
@@ -113,6 +121,7 @@ class DatabaseStoreTest extends TestCase
         $table = m::mock('stdClass');
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('whereIn')->once()->with('key', ['foo', 'fizz', 'quz', 'norf'])->andReturn($table);
         $table->shouldReceive('get')->once()->andReturn(collect([
             (object) ['key' => 'foo', 'value' => json_encode('bar')],
@@ -130,6 +139,7 @@ class DatabaseStoreTest extends TestCase
         // Dot syntax
 
         $store->getConnection()->shouldReceive('table')->times(3)->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->times(3)->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'qux')->andReturn($table);
         $table->shouldReceive('whereIn')->once()->with('key', [2 => 'fizz', 3 => 'norf'])->andReturn($table);
@@ -153,6 +163,7 @@ class DatabaseStoreTest extends TestCase
         $store = $this->getStore();
         $table = m::mock('stdClass');
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('get')->once()->andReturn(collect([
             (object) ['key' => 'foo', 'value' => json_encode('bar')],
             (object) ['key' => 'fizz', 'value' => json_encode('buz')],
@@ -171,18 +182,21 @@ class DatabaseStoreTest extends TestCase
         $table = m::mock('stdClass');
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('updateOrInsert')->once()->with(['key' => 'foo'], ['value' => json_encode('bar')]);
         $store->set('foo', 'bar');
 
         // Dot syntax:
 
         $store->getConnection()->shouldReceive('table')->twice()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->twice()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturnNull();
         $table->shouldReceive('updateOrInsert')->once()->with(['key' => 'products'], ['value' => json_encode(['desk' => ['price' => 200]])]);
         $store->set('products.desk.price', 200);
 
         $store->getConnection()->shouldReceive('table')->twice()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->twice()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturn((object) [
             'key' => 'products',
@@ -199,6 +213,7 @@ class DatabaseStoreTest extends TestCase
         $store->set('products.desk.height', 120);
 
         $store->getConnection()->shouldReceive('table')->twice()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->twice()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturn((object) [
             'key' => 'products',
@@ -213,6 +228,7 @@ class DatabaseStoreTest extends TestCase
         $store = $this->getStore();
         $table = m::mock('stdClass');
         $store->getConnection()->shouldReceive('table')->twice()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->twice()->with('scope')->andReturn($table);
         $table->shouldReceive('updateOrInsert')->once()->with(['key' => 'foo'], ['value' => json_encode('bar')]);
         $table->shouldReceive('updateOrInsert')->once()->with(['key' => 'qux'], ['value' => json_encode('baz')]);
 
@@ -224,6 +240,7 @@ class DatabaseStoreTest extends TestCase
         $store = $this->getStore();
         $table = m::mock('stdClass');
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('delete')->once();
         $store->forget('foo');
@@ -231,6 +248,7 @@ class DatabaseStoreTest extends TestCase
         $store = $this->getStore();
         $table = m::mock('stdClass');
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturnNull();
         $table->shouldNotReceive('updateOrInsert');
@@ -240,6 +258,7 @@ class DatabaseStoreTest extends TestCase
         $store = $this->getStore();
         $table = m::mock('stdClass');
         $store->getConnection()->shouldReceive('table')->times(4)->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->times(4)->with('scope')->andReturn($table);
         $table->shouldReceive('where')->twice()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturn((object) ['key' => 'foo', 'value' => json_encode('fish')]);
         $table->shouldReceive('updateOrInsert')->with(['key' => 'foo'], ['value' => json_encode('fish')]);
@@ -259,6 +278,7 @@ class DatabaseStoreTest extends TestCase
         $store = $this->getStore();
         $table = m::mock('stdClass');
         $store->getConnection()->shouldReceive('table')->twice()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->twice()->with('scope')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'qux')->andReturn($table);
         $table->shouldReceive('delete')->twice();
@@ -271,6 +291,7 @@ class DatabaseStoreTest extends TestCase
         $store = $this->getStore();
         $table = m::mock('stdClass');
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('whereNull')->once()->with('scope')->andReturn($table);
         $table->shouldReceive('delete')->once()->andReturn(2);
 
         $result = $store->flush();

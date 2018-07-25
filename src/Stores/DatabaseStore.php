@@ -389,7 +389,7 @@ class DatabaseStore implements StoreContract
         } elseif (is_string($this->scope)) {
             $query = $query->table($this->table)->where($this->scopeColumn, $this->scope);
         } else {
-            $query = $query->table($this->table);
+            $query = $query->table($this->table)->whereNull($this->scopeColumn);
         }
 
         return $query;

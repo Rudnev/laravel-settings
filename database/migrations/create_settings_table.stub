@@ -22,15 +22,15 @@ class CreateSettingsTable extends Migration
     {
         $this->conn  = config('settings.stores.database.connection');
 
-        $this->table = config('settings.stores.database.table');
-        $this->key   = config('settings.stores.database.key_column');
-        $this->value = config('settings.stores.database.value_column');
-        $this->scope = config('settings.stores.database.scope_column');
+        $this->table = config('settings.stores.database.names.settings.table');
+        $this->key   = config('settings.stores.database.names.settings.key');
+        $this->value = config('settings.stores.database.names.settings.value');
+        $this->scope = config('settings.stores.database.names.settings.scope');
 
-		$this->morphTable  = config('settings.stores.database.morph_table');
-        $this->morphEntity = config('settings.stores.database.morph_entity');
-        $this->morphKey    = config('settings.stores.database.morph_key');
-        $this->morphValue  = config('settings.stores.database.morph_value');
+        $this->morphTable  = config('settings.stores.database.names.settings_models.table');
+        $this->morphEntity = config('settings.stores.database.names.settings_models.entity');
+        $this->morphKey    = config('settings.stores.database.names.settings_models.key');
+        $this->morphValue  = config('settings.stores.database.names.settings_models.value');
     }
 
     /**
