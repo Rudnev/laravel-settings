@@ -91,4 +91,12 @@ interface StoreContract
      * @return bool
      */
     public function flush();
+
+    /**
+     * Set the scope.
+     *
+     * @param mixed $scope
+     * @return \Rudnev\Settings\Contracts\StoreContract
+     */
+    public function scope($scope): StoreContract;
 }

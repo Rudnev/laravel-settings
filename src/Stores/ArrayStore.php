@@ -15,6 +15,13 @@ class ArrayStore implements StoreContract
     protected $name;
 
     /**
+     * The scope.
+     *
+     * @var mixed
+     */
+    protected $scope;
+
+    /**
      * The array of stored values.
      *
      * @var array
@@ -123,5 +130,20 @@ class ArrayStore implements StoreContract
         $this->storage = [];
 
         return true;
+    }
+
+    /**
+     * Set the scope.
+     *
+     * @param $scope
+     * @return \Rudnev\Settings\Contracts\StoreContract
+     */
+    public function scope($scope): StoreContract
+    {
+        $store = clone $this;
+
+        $store->flush();
+
+        return $store;
     }
 }

@@ -5,25 +5,15 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CreateSettingsTable extends Migration
 {
-    /**
-     * @var string
-     */
     protected $conn;
-
-    /**
-     * @var string
-     */
     protected $table;
-
-    /**
-     * @var string
-     */
     protected $key;
-
-    /**
-     * @var string
-     */
     protected $value;
+	protected $scope;
+    protected $morphTable;
+    protected $morphEntity;
+    protected $morphKey;
+    protected $morphValue;
 
     /**
      * CreateSettingsTable constructor.
@@ -31,9 +21,16 @@ class CreateSettingsTable extends Migration
     public function __construct()
     {
         $this->conn  = config('settings.stores.database.connection');
+
         $this->table = config('settings.stores.database.table');
         $this->key   = config('settings.stores.database.key_column');
         $this->value = config('settings.stores.database.value_column');
+        $this->scope = config('settings.stores.database.scope_column');
+
+		$this->morphTable  = config('settings.stores.database.morph_table');
+        $this->morphEntity = config('settings.stores.database.morph_entity');
+        $this->morphKey    = config('settings.stores.database.morph_key');
+        $this->morphValue  = config('settings.stores.database.morph_value');
     }
 
     /**
@@ -46,9 +43,22 @@ class CreateSettingsTable extends Migration
         Schema::connection($this->conn)->create($this->table, function(Blueprint $table)
         {
         	$table->increments('id');
-            $table->string($this->key)->unique();
+        	$table->string($this->scope)->nullable();
+            $table->string($this->key);
             $table->text($this->value)->nullable();
+
+            $table->unique([$this->scope, $this->key]);
         });
+
+        Schema::connection($this->conn)->create($this->morphTable, function(Blueprint $table)
+        {
+            $table->morphs($this->morphEntity);
+			$table->string($this->morphKey);
+			$table->text($this->morphValue)->nullable();
+            $table->primary([$this->morphEntity.'_id', $this->morphEntity.'_type', $this->morphKey]);
+        });
+
+		app('cache')->forget('laravel-settings');
     }
 
     /**
@@ -59,5 +69,6 @@ class CreateSettingsTable extends Migration
     public function down()
     {
         Schema::connection($this->conn)->drop($this->table);
+        Schema::connection($this->conn)->drop($this->morphTable);
     }
 }

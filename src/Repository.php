@@ -47,6 +47,13 @@ class Repository implements ArrayAccess, RepositoryContract
     protected $events;
 
     /**
+     * The scope.
+     *
+     * @var mixed
+     */
+    protected $scope;
+
+    /**
      * Create a new settings repository instance.
      *
      * @param  \Rudnev\Settings\Contracts\StoreContract $store
@@ -75,7 +82,7 @@ class Repository implements ArrayAccess, RepositoryContract
      */
     public function setStore(StoreContract $store)
     {
-        $this->store = $store;
+        $this->store = $store->scope($this->scope);
     }
 
     /**
@@ -122,6 +129,33 @@ class Repository implements ArrayAccess, RepositoryContract
     public function setEventDispatcher(DispatcherContract $dispatcher)
     {
         $this->events = $dispatcher;
+    }
+
+    /**
+     * Get the scope
+     *
+     * @return mixed
+     */
+    public function getScope()
+    {
+        return $this->scope;
+    }
+
+    /**
+     * Set the scope
+     *
+     * @param mixed
+     * @return void
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
+
+        if (isset($this->store)) {
+            $this->store = $this->store->scope($scope);
+        }
+
+        $this->cache = null;
     }
 
     /**
@@ -301,6 +335,22 @@ class Repository implements ArrayAccess, RepositoryContract
     }
 
     /**
+     * Set the scope.
+     *
+     * @param mixed $scope
+     * @param array $options
+     * @return \Rudnev\Settings\Contracts\RepositoryContract
+     */
+    public function scope($scope, $options = null): RepositoryContract
+    {
+        $repo = clone $this;
+
+        $repo->setScope($scope);
+
+        return $repo;
+    }
+
+    /**
      * Get the cache if it's enabled, otherwise the settings store.
      *
      * @return \Rudnev\Settings\Contracts\StoreContract
@@ -401,10 +451,6 @@ class Repository implements ArrayAccess, RepositoryContract
 
         if (is_object($this->cache)) {
             $this->cache = clone $this->cache;
-        }
-
-        if (is_object($this->events)) {
-            $this->events = clone $this->events;
         }
     }
 }

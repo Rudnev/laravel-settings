@@ -15,7 +15,7 @@ interface RepositoryContract
     /**
      * Retrieve an item from the settings store by key.
      *
-     * @param  string $key
+     * @param  string|iterable $key
      * @param  mixed $default
      * @return mixed
      */
@@ -31,16 +31,16 @@ interface RepositoryContract
     /**
      * Store an item in the settings store.
      *
-     * @param  string $key
+     * @param  string|iterable $key
      * @param  mixed $value
      * @return void
      */
-    public function set($key, $value);
+    public function set($key, $value = null);
 
     /**
      * Remove an item from the settings store.
      *
-     * @param  string $key
+     * @param  string|iterable $key
      * @return bool
      */
     public function forget($key);
@@ -51,4 +51,12 @@ interface RepositoryContract
      * @return bool
      */
     public function flush();
+
+    /**
+     * Set the scope.
+     *
+     * @param mixed $scope
+     * @return \Rudnev\Settings\Contracts\RepositoryContract
+     */
+    public function scope($scope): RepositoryContract;
 }

@@ -8,7 +8,7 @@ if (! function_exists('settings')) {
      *
      * @param  string|iterable $key
      * @param  mixed|null $default
-     * @return mixed|\Rudnev\Settings\Repository
+     * @return mixed|\Rudnev\Settings\SettingsManager
      */
     function settings($key = null, $default = null)
     {

@@ -3,6 +3,7 @@
 namespace Rudnev\Settings\Stores;
 
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Rudnev\Settings\Contracts\StoreContract;
 
@@ -44,20 +45,74 @@ class DatabaseStore implements StoreContract
     protected $valueColumn;
 
     /**
+     * The name of the scope column.
+     *
+     * @var string
+     */
+    protected $scopeColumn;
+
+    /***
+     * The name of the table for storing model settings.
+     *
+     * @var string
+     */
+    protected $morphTable;
+
+    /***
+     * The entity id column.
+     *
+     * @var string
+     */
+    protected $morphId;
+
+    /***
+     * The entity type column.
+     *
+     * @var string
+     */
+    protected $morphType;
+
+    /***
+     * The name of the "key" column.
+     *
+     * @var string
+     */
+    protected $morphKey;
+
+    /***
+     * The name of the "value" column.
+     *
+     * @var string
+     */
+    protected $morphValue;
+
+    /**
+     * The scope.
+     *
+     * @var mixed
+     */
+    protected $scope;
+
+    /**
      * Create a new database store.
      *
      * @param  \Illuminate\Database\ConnectionInterface $connection
-     * @param  string $table
-     * @param  string $keyColumn
-     * @param  string $valueColumn
+     * @param  array $names
      * @return void
      */
-    public function __construct(ConnectionInterface $connection, $table, $keyColumn, $valueColumn)
+    public function __construct(ConnectionInterface $connection, array $names)
     {
-        $this->table = $table;
-        $this->keyColumn = $keyColumn;
-        $this->valueColumn = $valueColumn;
         $this->connection = $connection;
+
+        $this->table = $names['settings']['table'];
+        $this->keyColumn = $names['settings']['key'];
+        $this->valueColumn = $names['settings']['value'];
+        $this->scopeColumn = $names['settings']['scope'];
+        $this->morphTable = $names['settings_models']['table'];
+        $this->morphId = $names['settings_models']['entity'].'_id';
+        $this->morphType = $names['settings_models']['entity'].'_type';
+        $this->morphKey = $names['settings_models']['key'];
+        $this->morphValue = $names['settings_models']['value'];
     }
 
     /**
@@ -74,6 +129,41 @@ class DatabaseStore implements StoreContract
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * Get the scope
+     *
+     * @return mixed
+     */
+    public function getScope()
+    {
+        return $this->scope;
+    }
+
+    /**
+     * Set the scope
+     *
+     * @param mixed
+     * @return void
+     */
+    public function setScope($scope)
+    {
+        if (is_null($scope)) {
+            $this->scope = null;
+
+            return;
+        }
+
+        if (is_object($scope) and method_exists($scope, 'getKey')) {
+            $this->table = $this->morphTable;
+            $this->keyColumn = $this->morphKey;
+            $this->valueColumn = $this->morphValue;
+        } else {
+            $scope = (string) $scope;
+        }
+
+        $this->scope = $scope;
     }
 
     /**
@@ -272,13 +362,37 @@ class DatabaseStore implements StoreContract
     }
 
     /**
+     * @inheritDoc
+     */
+    public function scope($scope): StoreContract
+    {
+        $store = clone $this;
+
+        $store->setScope($scope);
+
+        return $store;
+    }
+
+    /**
      * Get a query builder for the settings table.
      *
      * @return \Illuminate\Database\Query\Builder
      */
     protected function table()
     {
-        return $this->connection->table($this->table);
+        $query = $this->connection;
+
+        if (is_object($this->scope) and method_exists($this->scope, 'getKey')) {
+            $model = $this->scope;
+            $query = $query->table($this->table);
+            $query = $query->where($this->morphId, $model->getKey())->where($this->morphType, get_class($model));
+        } elseif (is_string($this->scope)) {
+            $query = $query->table($this->table)->where($this->scopeColumn, $this->scope);
+        } else {
+            $query = $query->table($this->table);
+        }
+
+        return $query;
     }
 
     /**

@@ -156,7 +156,7 @@ class SettingsManager implements FactoryContract
     {
         $connection = $this->app['db']->connection($config['connection'] ?? null);
 
-        $store = new DatabaseStore($connection, $config['table'], $config['key_column'], $config['value_column']);
+        $store = new DatabaseStore($connection, $config['names']);
 
         $store->setName($name);
 

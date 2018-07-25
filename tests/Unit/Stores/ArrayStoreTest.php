@@ -102,4 +102,10 @@ class ArrayStoreTest extends TestCase
         $this->assertNull($store->get('foo'));
         $this->assertNull($store->get('baz'));
     }
+
+    public function testScope()
+    {
+        $store = new ArrayStore();
+        $store->scope('foo');
+    }
 }

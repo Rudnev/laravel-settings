@@ -116,6 +116,15 @@ class RepositoryTest extends TestCase
         $repo->forget(['baz', 'qux']);
     }
 
+    public function testScope()
+    {
+        $repo = $this->getRepository();
+        $this->assertNull($repo->getScope());
+        $repo->getStore()->shouldReceive('scope')->with('foo');
+        $this->assertNotEquals(spl_object_id($repo), spl_object_id($repo = $repo->scope('foo')));
+        $this->assertEquals('foo', $repo->getScope());
+    }
+
     public function testRegisterMacroWithNonStaticCall()
     {
         $repo = $this->getRepository();
@@ -143,9 +152,10 @@ class RepositoryTest extends TestCase
     {
         $repo = $this->getRepository();
         $repo->setCache(m::spy('Rudnev\Settings\Cache\Cache'));
+        $repo->setStore(new ArrayStore());
         $repo2 = clone $repo;
-        $this->assertEquals($repo->getCache(), $repo2->getCache());
-        $this->assertEquals($repo->getEventDispatcher(), $repo2->getEventDispatcher());
+        $this->assertNotEquals(spl_object_id($repo->getStore()), spl_object_id($repo2->getStore()));
+        $this->assertNotEquals(spl_object_id($repo->getCache()), spl_object_id($repo2->getCache()));
     }
 
     protected function getRepository()

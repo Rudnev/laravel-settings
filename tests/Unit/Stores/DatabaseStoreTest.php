@@ -3,6 +3,7 @@
 namespace Rudnev\Settings\Tests\Unit\Stores;
 
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -37,9 +38,10 @@ class DatabaseStoreTest extends TestCase
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
-        $table->shouldReceive('first')->once()->andReturn(
-            (object) ['key' => 'products', 'value' => json_encode(['desk' => ['price' => 200]])]
-        );
+        $table->shouldReceive('first')->once()->andReturn((object) [
+            'key' => 'products',
+            'value' => json_encode(['desk' => ['price' => 200]]),
+        ]);
         $this->assertTrue($store->has('products.desk.price'));
     }
 
@@ -76,9 +78,10 @@ class DatabaseStoreTest extends TestCase
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
-        $table->shouldReceive('first')->once()->andReturn(
-            (object) ['key' => 'products', 'value' => json_encode(['desk' => ['price' => 200]])]
-        );
+        $table->shouldReceive('first')->once()->andReturn((object) [
+            'key' => 'products',
+            'value' => json_encode(['desk' => ['price' => 200]]),
+        ]);
         $this->assertNull($store->get('products.chair'));
     }
 
@@ -97,9 +100,10 @@ class DatabaseStoreTest extends TestCase
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
-        $table->shouldReceive('first')->once()->andReturn(
-            (object) ['key' => 'products', 'value' => json_encode(['desk' => ['price' => 200]])]
-        );
+        $table->shouldReceive('first')->once()->andReturn((object) [
+            'key' => 'products',
+            'value' => json_encode(['desk' => ['price' => 200]]),
+        ]);
         $this->assertEquals(200, $store->get('products.desk.price'));
     }
 
@@ -113,13 +117,13 @@ class DatabaseStoreTest extends TestCase
         $table->shouldReceive('get')->once()->andReturn(collect([
             (object) ['key' => 'foo', 'value' => json_encode('bar')],
             (object) ['key' => 'fizz', 'value' => json_encode('buz')],
-            (object) ['key' => 'quz', 'value' => json_encode('baz')]
+            (object) ['key' => 'quz', 'value' => json_encode('baz')],
         ]));
         $this->assertEquals([
-            'foo'   => 'bar',
-            'fizz'  => 'buz',
-            'quz'   => 'baz',
-            'norf'  => null
+            'foo' => 'bar',
+            'fizz' => 'buz',
+            'quz' => 'baz',
+            'norf' => null,
         ], $store->getMultiple(['foo', 'fizz', 'quz', 'norf']));
         $this->assertEquals([], $store->getMultiple([]));
 
@@ -129,17 +133,18 @@ class DatabaseStoreTest extends TestCase
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'qux')->andReturn($table);
         $table->shouldReceive('whereIn')->once()->with('key', [2 => 'fizz', 3 => 'norf'])->andReturn($table);
-        $table->shouldReceive('first')->twice()->andReturn(
-            (object) ['key' => 'foo', 'value' => json_encode(['bar' => 'baz'])]
-        );
+        $table->shouldReceive('first')->twice()->andReturn((object) [
+            'key' => 'foo',
+            'value' => json_encode(['bar' => 'baz']),
+        ]);
         $table->shouldReceive('get')->once()->andReturn(collect([
-            (object) ['key' => 'fizz', 'value' => json_encode('buz')]
+            (object) ['key' => 'fizz', 'value' => json_encode('buz')],
         ]));
         $this->assertEquals([
             'foo.bar' => 'baz',
             'qux.pax' => null,
             'fizz' => 'buz',
-            'norf' => null
+            'norf' => null,
         ], $store->getMultiple(['foo.bar', 'qux.pax', 'fizz', 'norf']));
     }
 
@@ -151,12 +156,12 @@ class DatabaseStoreTest extends TestCase
         $table->shouldReceive('get')->once()->andReturn(collect([
             (object) ['key' => 'foo', 'value' => json_encode('bar')],
             (object) ['key' => 'fizz', 'value' => json_encode('buz')],
-            (object) ['key' => 'quz', 'value' => json_encode('baz')]
+            (object) ['key' => 'quz', 'value' => json_encode('baz')],
         ]));
         $this->assertEquals([
-            'foo'   => 'bar',
-            'fizz'  => 'buz',
-            'quz'   => 'baz'
+            'foo' => 'bar',
+            'fizz' => 'buz',
+            'quz' => 'baz',
         ], $store->all());
     }
 
@@ -174,32 +179,32 @@ class DatabaseStoreTest extends TestCase
         $store->getConnection()->shouldReceive('table')->twice()->with('table')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
         $table->shouldReceive('first')->once()->andReturnNull();
-        $table->shouldReceive('updateOrInsert')->once()->with(
-            ['key' => 'products'],
-            ['value' => json_encode( ['desk' => ['price' => 200]] )]
-        );
+        $table->shouldReceive('updateOrInsert')->once()->with(['key' => 'products'], ['value' => json_encode(['desk' => ['price' => 200]])]);
         $store->set('products.desk.price', 200);
 
         $store->getConnection()->shouldReceive('table')->twice()->with('table')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
-        $table->shouldReceive('first')->once()->andReturn(
-            (object) ['key' => 'products', 'value' => json_encode(['desk' => ['price' => 200]])]
-        );
-        $table->shouldReceive('updateOrInsert')->once()->with(
-            ['key' => 'products'],
-            ['value' => json_encode( ['desk' => ['price' => 200, 'height' => 120]] )]
-        );
+        $table->shouldReceive('first')->once()->andReturn((object) [
+            'key' => 'products',
+            'value' => json_encode(['desk' => ['price' => 200]]),
+        ]);
+        $table->shouldReceive('updateOrInsert')->once()->with(['key' => 'products'], [
+            'value' => json_encode([
+                'desk' => [
+                    'price' => 200,
+                    'height' => 120,
+                ],
+            ]),
+        ]);
         $store->set('products.desk.height', 120);
 
         $store->getConnection()->shouldReceive('table')->twice()->with('table')->andReturn($table);
         $table->shouldReceive('where')->once()->with('key', '=', 'products')->andReturn($table);
-        $table->shouldReceive('first')->once()->andReturn(
-            (object) ['key' => 'products', 'value' => json_encode(['desk' => ['price' => 200, 'height' => 120]])]
-        );
-        $table->shouldReceive('updateOrInsert')->once()->with(
-            ['key' => 'products'],
-            ['value' => json_encode( ['desk' => ['price' => 300]] )]
-        );
+        $table->shouldReceive('first')->once()->andReturn((object) [
+            'key' => 'products',
+            'value' => json_encode(['desk' => ['price' => 200, 'height' => 120]]),
+        ]);
+        $table->shouldReceive('updateOrInsert')->once()->with(['key' => 'products'], ['value' => json_encode(['desk' => ['price' => 300]])]);
         $store->set('products.desk', ['price' => 300]);
     }
 
@@ -236,15 +241,14 @@ class DatabaseStoreTest extends TestCase
         $table = m::mock('stdClass');
         $store->getConnection()->shouldReceive('table')->times(4)->with('table')->andReturn($table);
         $table->shouldReceive('where')->twice()->with('key', '=', 'foo')->andReturn($table);
-        $table->shouldReceive('first')->once()->andReturn(
-            (object) ['key' => 'foo', 'value' => json_encode('fish')]
-        );
+        $table->shouldReceive('first')->once()->andReturn((object) ['key' => 'foo', 'value' => json_encode('fish')]);
         $table->shouldReceive('updateOrInsert')->with(['key' => 'foo'], ['value' => json_encode('fish')]);
         $table->shouldNotReceive('delete');
         $store->forget('foo.bar');
-        $table->shouldReceive('first')->once()->andReturn(
-            (object) ['key' => 'foo', 'value' => json_encode(['bar' => 1, 'baz' => 2])]
-        );
+        $table->shouldReceive('first')->once()->andReturn((object) [
+            'key' => 'foo',
+            'value' => json_encode(['bar' => 1, 'baz' => 2]),
+        ]);
         $table->shouldReceive('updateOrInsert')->with(['key' => 'foo'], ['value' => json_encode(['baz' => 2])]);
         $table->shouldNotReceive('delete');
         $store->forget('foo.bar');
@@ -273,8 +277,53 @@ class DatabaseStoreTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testScope()
+    {
+        $store = $this->getStore();
+        $table = m::mock('stdClass');
+        $this->assertNotEquals(spl_object_id($store), spl_object_id($store = $store->scope('foo')));
+        $this->assertEquals('foo', $store->getScope());
+        $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
+        $table->shouldReceive('where')->once()->with('scope', 'foo')->andReturn($table);
+        $table->shouldReceive('where')->once()->with('key', '=', 'bar')->andReturn($table);
+        $table->shouldReceive('first')->once()->andReturn((object) [
+            'key' => 'bar',
+            'value' => json_encode('baz'),
+        ]);
+        $this->assertEquals('baz', $store->get('bar'));
+        $this->assertEquals(null, $store->setScope(null));
+
+        $store = $this->getStore();
+        $table = m::mock('stdClass');
+        $model = m::mock('Illuminate\Database\Eloquent\Model');
+        $this->assertNotEquals(spl_object_id($store), spl_object_id($store = $store->scope($model)));
+        $model->shouldReceive('getKey')->andReturn(123);
+        $store->getConnection()->shouldReceive('table')->once()->with('settings_models')->andReturn($table);
+        $table->shouldReceive('where')->once()->with('model_id', 123)->andReturn($table);
+        $table->shouldReceive('where')->once()->with('model_type', get_class($model))->andReturn($table);
+        $table->shouldReceive('where')->once()->with('key', '=', 'bar')->andReturn($table);
+        $table->shouldReceive('first')->once()->andReturn((object) [
+            'key' => 'bar',
+            'value' => json_encode('baz'),
+        ]);
+        $this->assertEquals('baz', $store->get('bar'));
+    }
+
     protected function getStore()
     {
-        return new DatabaseStore(m::mock('Illuminate\Database\Connection'), 'table', 'key', 'value');
+        return new DatabaseStore(m::mock('Illuminate\Database\Connection'), [
+            'settings' => [
+                'table' => 'table',
+                'scope' => 'scope',
+                'key' => 'key',
+                'value' => 'value',
+            ],
+            'settings_models' => [
+                'table' => 'settings_models',
+                'entity' => 'model',
+                'key' => 'key',
+                'value' => 'value',
+            ],
+        ]);
     }
 }

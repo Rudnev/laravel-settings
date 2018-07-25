@@ -6,6 +6,7 @@
 Persistent settings for Laravel Framework 
 
 + Easy to Use
++ App Settings + User Settings (Scopes)
 + Events
 + Cache
 + Extendable Settings Manager
@@ -149,6 +150,117 @@ Settings::forget('products.desk.price');
 Settings::has('products.desk.height');
 Settings::get('products.desk');
 ```
+
+### Scopes
+
+If you want to have settings for your model you can use `scope` method:
+
+```php
+$user = auth()->user();
+
+Settings::scope($user)->set('language', 'en');
+
+Settings::scope($user)->get('language');
+```
+ 
+Alternatively, you can add `Rudnev\Settings\Trait\HasSettings` trait to your model, for example:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Rudnev\Settings\Trait\HasSettings;
+
+class User extends Model 
+{
+    use HasSettings;
+    
+    // ...
+}
+```
+
+Now you can use `settings` method to set and get values:
+
+```php
+$user->settings()->set('language', 'en');
+$user->settings()->get('language');
+
+// the same:
+
+$user->settings(['language' => 'en']);
+$user->settings('language');
+```
+
+If you want specify the store from `config/settings.php`, override `$settingsConfig` array:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+use Rudnev\Settings\Trait\HasSettings;
+
+class User extends Model 
+{
+    use HasSettings;
+    
+    protected $settingsConfig = [
+        'store' => 'database'
+    ];
+    
+    // ...
+}
+```
+
+> Attention: The cache is only available for global settings and is not available for scopes. You must take care of this yourself.
+
+### Translation
+
+I suggest using the built-in laravel methods to translate any keys, names and descriptions. You can use this approach for most laravel packages, there is no need to store translations within different database tables when you can do this in one place.
+
+For example, create a file `resources/lang/en/settings.php`:
+```php
+<?php
+
+return [
+    'user' => [
+        'language' => [
+            'name' => 'Language',
+            'description' => 'The site language.'    
+        ],
+        
+        'mfa' => [
+            'name' => 'MFA',
+            'description' => 'Multi-factor authentication.'    
+        ],
+    ]
+];
+```
+
+And get the translated strings:
+```php
+$user = auth()->user();
+$userSettings = Settings::scoupe($user);
+
+// Store locale:
+$userSettings->set('language', 'en');
+
+// Store some settings:
+$userSettings->set('mfa', 'enabled');
+
+// Retrieve locale:
+$locale = $userSettings->get('language');
+
+// Apply locale:
+App::setLocale($locale);
+
+// Print translated strings:
+foreach ($userSettings->all() as $key => $value)
+{
+    $name = trans("settings.user.$key.name");
+    $desc = trans("settings.user.$key.description");
+    
+    echo "$name: $value ($desc)" . PHP_EOL;
+}
+```
+
+
+
 
 ### Events
 

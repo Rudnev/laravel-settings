@@ -126,14 +126,25 @@ class SettingsManagerTest extends TestCase
                     ],
                     'bar' => [
                         'driver' => 'database',
-                        'table' => 'settings',
-                        'key_column' => 'name',
-                        'value_column' => 'value',
                         'connection' => null,
                         'cache' => [
                             'enabled' => true,
                             'ttl' => 1,
                             'store' => null,
+                        ],
+                        'names' => [
+                            'settings' => [
+                                'table' => 'table',
+                                'scope' => 'scope',
+                                'key' => 'key',
+                                'value' => 'value',
+                            ],
+                            'settings_models' => [
+                                'table' => 'settings_models',
+                                'entity' => 'model',
+                                'key' => 'name',
+                                'value' => 'value',
+                            ],
                         ],
                     ],
                 ],
