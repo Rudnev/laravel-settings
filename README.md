@@ -232,10 +232,10 @@ return [
 ];
 ```
 
-And get the translated strings:
+And get translated strings:
 ```php
 $user = auth()->user();
-$userSettings = Settings::scoupe($user);
+$userSettings = Settings::scope($user);
 
 // Store locale:
 $userSettings->set('language', 'en');
