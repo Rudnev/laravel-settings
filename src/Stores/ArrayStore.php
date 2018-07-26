@@ -8,7 +8,7 @@ use Rudnev\Settings\Contracts\StoreContract;
 class ArrayStore implements StoreContract
 {
     /**
-     * The settings store name
+     * The settings store name.
      *
      * @var string
      */
@@ -29,7 +29,7 @@ class ArrayStore implements StoreContract
     protected $storage = [];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -37,7 +37,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setName($name)
     {
@@ -45,7 +45,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function has($key)
     {
@@ -53,7 +53,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function get($key)
     {
@@ -61,7 +61,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getMultiple(iterable $keys)
     {
@@ -75,7 +75,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function all()
     {
@@ -83,7 +83,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function set($key, $value)
     {
@@ -91,7 +91,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setMultiple(iterable $values)
     {
@@ -101,7 +101,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function forget($key)
     {
@@ -111,7 +111,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function forgetMultiple(iterable $keys)
     {
@@ -123,7 +123,7 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function flush()
     {

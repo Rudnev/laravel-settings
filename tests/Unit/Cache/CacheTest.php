@@ -2,11 +2,11 @@
 
 namespace Rudnev\Settings\Tests\Unit\Cache;
 
-use Illuminate\Cache\Repository as CacheRepo;
-use Illuminate\Cache\ArrayStore as CacheRepoStore;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Rudnev\Settings\Cache\Cache;
+use Illuminate\Cache\Repository as CacheRepo;
+use Illuminate\Cache\ArrayStore as CacheRepoStore;
 
 class CacheTest extends TestCase
 {

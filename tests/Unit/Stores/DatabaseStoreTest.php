@@ -2,11 +2,9 @@
 
 namespace Rudnev\Settings\Tests\Unit\Stores;
 
-use Exception;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Database\Eloquent\Model;
 use Rudnev\Settings\Stores\DatabaseStore;
 
 class DatabaseStoreTest extends TestCase

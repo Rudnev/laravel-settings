@@ -58,5 +58,5 @@ interface RepositoryContract
      * @param mixed $scope
      * @return \Rudnev\Settings\Contracts\RepositoryContract
      */
-    public function scope($scope): RepositoryContract;
+    public function scope($scope): self;
 }

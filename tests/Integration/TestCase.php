@@ -2,9 +2,9 @@
 
 namespace Rudnev\Settings\Tests\Integration;
 
-use Orchestra\Testbench\TestCase as Orchestra;
-use Rudnev\Settings\Facades\SettingsFacade;
 use Rudnev\Settings\ServiceProvider;
+use Rudnev\Settings\Facades\SettingsFacade;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
 {

@@ -41,7 +41,7 @@ class ArrayStoreTest extends TestCase
             'foo'   => 'bar',
             'fizz'  => 'buz',
             'quz'   => 'baz',
-            'norf'  => null
+            'norf'  => null,
         ], $store->getMultiple(['foo', 'fizz', 'quz', 'norf']));
 
         // Dot syntax:
@@ -63,7 +63,7 @@ class ArrayStoreTest extends TestCase
         $this->assertEquals([
             'foo'   => 'bar',
             'qwe'  => ['asd' => 'zxc'],
-            'norf'  => null
+            'norf'  => null,
         ], $store->getMultiple(['foo', 'qwe', 'norf']));
     }
 
