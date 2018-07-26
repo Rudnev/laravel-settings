@@ -3,9 +3,9 @@
 namespace Rudnev\Settings\Cache;
 
 use Closure;
+use Rudnev\Settings\Stores\ArrayStore;
 use Illuminate\Contracts\Cache\Repository;
 use Rudnev\Settings\Contracts\StoreContract;
-use Rudnev\Settings\Stores\ArrayStore;
 
 class Cache extends ArrayStore implements StoreContract
 {
@@ -26,7 +26,7 @@ class Cache extends ArrayStore implements StoreContract
     /**
      * The time to life of the cache.
      *
-     * @var integer
+     * @var int
      */
     protected $ttl;
 
@@ -34,7 +34,7 @@ class Cache extends ArrayStore implements StoreContract
      * Cache constructor.
      *
      * @param \Illuminate\Contracts\Cache\Repository $repo
-     * @param integer $ttl
+     * @param int $ttl
      * @param string $name
      *
      * @return void
@@ -84,7 +84,7 @@ class Cache extends ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function set($key, $value)
     {
@@ -94,7 +94,7 @@ class Cache extends ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function forget($key)
     {
@@ -104,7 +104,7 @@ class Cache extends ArrayStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function flush()
     {

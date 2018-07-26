@@ -98,5 +98,5 @@ interface StoreContract
      * @param mixed $scope
      * @return \Rudnev\Settings\Contracts\StoreContract
      */
-    public function scope($scope): StoreContract;
+    public function scope($scope): self;
 }

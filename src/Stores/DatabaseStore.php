@@ -2,15 +2,15 @@
 
 namespace Rudnev\Settings\Stores;
 
-use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\ConnectionInterface;
 use Rudnev\Settings\Contracts\StoreContract;
 
 class DatabaseStore implements StoreContract
 {
     /**
-     * The settings store name
+     * The settings store name.
      *
      * @var string
      */
@@ -116,7 +116,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -124,7 +124,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setName($name)
     {
@@ -132,7 +132,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * Get the scope
+     * Get the scope.
      *
      * @return mixed
      */
@@ -142,7 +142,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * Set the scope
+     * Set the scope.
      *
      * @param mixed
      * @return void
@@ -167,7 +167,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function has($key)
     {
@@ -181,7 +181,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function get($key)
     {
@@ -207,7 +207,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getMultiple(iterable $keys)
     {
@@ -250,7 +250,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function all()
     {
@@ -266,7 +266,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function set($key, $value)
     {
@@ -287,7 +287,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setMultiple(iterable $values)
     {
@@ -299,7 +299,7 @@ class DatabaseStore implements StoreContract
 
     /**
      * Prepare the item for setting it to the store,
-     * if the key is a chain like a foo.bar.baz
+     * if the key is a chain like a foo.bar.baz.
      *
      * @param string $key
      * @param mixed $value
@@ -323,7 +323,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function forget($key)
     {
@@ -351,7 +351,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function forgetMultiple(iterable $keys)
     {
@@ -363,7 +363,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function flush()
     {
@@ -371,7 +371,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function scope($scope): StoreContract
     {
@@ -415,7 +415,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * Pack the value before write to the database
+     * Pack the value before write to the database.
      *
      * @param $value
      * @return string
@@ -426,7 +426,7 @@ class DatabaseStore implements StoreContract
     }
 
     /**
-     * Unpack the value after retrieving then from the database
+     * Unpack the value after retrieving then from the database.
      *
      * @param $value
      * @return string
