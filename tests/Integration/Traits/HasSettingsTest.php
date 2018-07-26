@@ -49,8 +49,8 @@ class HasSettingsTest extends TestCase
 
             protected $settingsConfig = [
               'default' => [
-                  'qux' => 'qux-default'
-              ]
+                  'qux' => 'qux-default',
+              ],
             ];
 
             public function getKey()
