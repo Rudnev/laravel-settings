@@ -3,18 +3,18 @@
 namespace Rudnev\Settings;
 
 use ArrayAccess;
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
-use Illuminate\Support\Traits\Macroable;
 use Rudnev\Settings\Cache\Cache;
-use Rudnev\Settings\Contracts\RepositoryContract;
-use Rudnev\Settings\Contracts\StoreContract;
-use Rudnev\Settings\Events\AllSettingsReceived;
-use Rudnev\Settings\Events\AllSettingsRemoved;
+use Rudnev\Settings\Events\StoreEvent;
+use Illuminate\Support\Traits\Macroable;
 use Rudnev\Settings\Events\PropertyMissed;
-use Rudnev\Settings\Events\PropertyReceived;
 use Rudnev\Settings\Events\PropertyRemoved;
 use Rudnev\Settings\Events\PropertyWritten;
-use Rudnev\Settings\Events\StoreEvent;
+use Rudnev\Settings\Contracts\StoreContract;
+use Rudnev\Settings\Events\PropertyReceived;
+use Rudnev\Settings\Events\AllSettingsRemoved;
+use Rudnev\Settings\Events\AllSettingsReceived;
+use Rudnev\Settings\Contracts\RepositoryContract;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 
 /**
  * @mixin \Rudnev\Settings\Contracts\StoreContract
@@ -132,7 +132,7 @@ class Repository implements ArrayAccess, RepositoryContract
     }
 
     /**
-     * Get the scope
+     * Get the scope.
      *
      * @return mixed
      */
@@ -142,7 +142,7 @@ class Repository implements ArrayAccess, RepositoryContract
     }
 
     /**
-     * Set the scope
+     * Set the scope.
      *
      * @param mixed
      * @return void

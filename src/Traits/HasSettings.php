@@ -5,7 +5,7 @@ namespace Rudnev\Settings\Traits;
 trait HasSettings
 {
     /**
-     * The settings config
+     * The settings config.
      *
      * @var array
      */

@@ -2,9 +2,9 @@
 
 namespace Rudnev\Settings\Tests\Integration\Traits;
 
-use Rudnev\Settings\Tests\Integration\TestCase;
+use Settings;
 use Rudnev\Settings\Traits\HasSettings;
-use \Settings;
+use Rudnev\Settings\Tests\Integration\TestCase;
 
 class HasSettingsTest extends TestCase
 {
@@ -42,8 +42,7 @@ class HasSettingsTest extends TestCase
 
     protected function getModel()
     {
-        return new class
-        {
+        return new class {
             use HasSettings;
 
             public function getKey()

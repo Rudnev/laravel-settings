@@ -3,17 +3,17 @@
 namespace Rudnev\Settings;
 
 use Closure;
-use Illuminate\Contracts\Cache\Factory as CacheFactoryContract;
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Rudnev\Settings\Cache\Cache;
-use Rudnev\Settings\Cache\EventSubscriber;
-use Rudnev\Settings\Contracts\FactoryContract;
-use Rudnev\Settings\Contracts\StoreContract;
+use Illuminate\Events\Dispatcher;
 use Rudnev\Settings\Stores\ArrayStore;
 use Rudnev\Settings\Stores\DatabaseStore;
+use Rudnev\Settings\Cache\EventSubscriber;
+use Rudnev\Settings\Contracts\StoreContract;
+use Rudnev\Settings\Contracts\FactoryContract;
+use Illuminate\Contracts\Cache\Factory as CacheFactoryContract;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 
 /**
  * @mixin \Rudnev\Settings\Contracts\RepositoryContract

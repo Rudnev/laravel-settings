@@ -5,9 +5,9 @@ namespace Rudnev\Settings\Tests\Unit\Cache;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Rudnev\Settings\Cache\EventSubscriber;
-use Rudnev\Settings\Events\AllSettingsRemoved;
 use Rudnev\Settings\Events\PropertyRemoved;
 use Rudnev\Settings\Events\PropertyWritten;
+use Rudnev\Settings\Events\AllSettingsRemoved;
 
 class EventSubscriberTest extends TestCase
 {

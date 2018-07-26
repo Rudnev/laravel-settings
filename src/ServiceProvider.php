@@ -2,11 +2,9 @@
 
 namespace Rudnev\Settings;
 
-use Illuminate\Support\ServiceProvider as BaseProvider;
 use Rudnev\Settings\Contracts\FactoryContract;
 use Rudnev\Settings\Contracts\RepositoryContract;
-use Rudnev\Settings\Repository;
-use Rudnev\Settings\SettingsManager;
+use Illuminate\Support\ServiceProvider as BaseProvider;
 
 class ServiceProvider extends BaseProvider
 {

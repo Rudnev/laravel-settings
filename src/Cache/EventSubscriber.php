@@ -2,9 +2,9 @@
 
 namespace Rudnev\Settings\Cache;
 
-use Rudnev\Settings\Events\AllSettingsRemoved;
 use Rudnev\Settings\Events\PropertyRemoved;
 use Rudnev\Settings\Events\PropertyWritten;
+use Rudnev\Settings\Events\AllSettingsRemoved;
 
 class EventSubscriber
 {
@@ -27,7 +27,7 @@ class EventSubscriber
     }
 
     /**
-     * The PropertyWritten event handler
+     * The PropertyWritten event handler.
      *
      * @param \Rudnev\Settings\Events\PropertyWritten $event
      * @return void
@@ -40,7 +40,7 @@ class EventSubscriber
     }
 
     /**
-     * The PropertyRemoved event handler
+     * The PropertyRemoved event handler.
      *
      * @param \Rudnev\Settings\Events\PropertyRemoved $event
      * @return void
@@ -53,7 +53,7 @@ class EventSubscriber
     }
 
     /**
-     * The AllSettingsRemoved event handler
+     * The AllSettingsRemoved event handler.
      *
      * @param \Rudnev\Settings\Events\AllSettingsRemoved $event
      * @return void

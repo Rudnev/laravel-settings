@@ -2,12 +2,12 @@
 
 namespace Rudnev\Settings\Tests\Integration;
 
-use Rudnev\Settings\Contracts\FactoryContract;
-use Rudnev\Settings\Contracts\RepositoryContract;
+use Settings;
 use Rudnev\Settings\Repository;
 use Rudnev\Settings\ServiceProvider;
 use Rudnev\Settings\SettingsManager;
-use \Settings;
+use Rudnev\Settings\Contracts\FactoryContract;
+use Rudnev\Settings\Contracts\RepositoryContract;
 
 class ServiceProviderTest extends TestCase
 {
