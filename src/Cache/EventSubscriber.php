@@ -34,7 +34,7 @@ class EventSubscriber
      */
     public function propertyWritten(PropertyWritten $event)
     {
-        if (is_null($event->getScope())) {
+        if ($event->getScope() === '') {
             $this->cache->set($event->key, $event->value);
         }
     }
@@ -47,7 +47,7 @@ class EventSubscriber
      */
     public function propertyRemoved(PropertyRemoved $event)
     {
-        if (is_null($event->getScope())) {
+        if ($event->getScope() === '') {
             $this->cache->forget($event->key);
         }
     }
@@ -60,7 +60,7 @@ class EventSubscriber
      */
     public function allSettingsRemoved(AllSettingsRemoved $event)
     {
-        if (is_null($event->getScope())) {
+        if ($event->getScope() === '') {
             $this->cache->flush();
         }
     }

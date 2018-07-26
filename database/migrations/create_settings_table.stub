@@ -42,12 +42,10 @@ class CreateSettingsTable extends Migration
     {
         Schema::connection($this->conn)->create($this->table, function(Blueprint $table)
         {
-        	$table->increments('id');
-        	$table->string($this->scope)->nullable();
+            $table->string($this->scope);
             $table->string($this->key);
             $table->text($this->value)->nullable();
-
-            $table->unique([$this->scope, $this->key]);
+            $table->primary([$this->scope, $this->key]);
         });
 
         Schema::connection($this->conn)->create($this->morphTable, function(Blueprint $table)

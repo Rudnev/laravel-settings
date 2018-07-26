@@ -119,7 +119,7 @@ class RepositoryTest extends TestCase
     public function testScope()
     {
         $repo = $this->getRepository();
-        $this->assertNull($repo->getScope());
+        $this->assertEquals('', $repo->getScope());
         $repo->getStore()->shouldReceive('scope')->with('foo');
         $this->assertNotEquals(spl_object_id($repo), spl_object_id($repo = $repo->scope('foo')));
         $this->assertEquals('foo', $repo->getScope());
@@ -137,7 +137,12 @@ class RepositoryTest extends TestCase
         $this->assertEquals(['foo' => 'bar', 'bar' => 'baz', 'baz' => 'qux'], $repo->getDefault());
         $this->assertEquals('bar', $repo->get('foo'));
         $this->assertNull($repo->get('qux'));
-        $this->assertEquals(['foo' => 'bar', 'bar' => 'baz', 'baz' => 'qux', 'qux' => null], $repo->get(['foo', 'bar', 'baz', 'qux']));
+        $this->assertEquals(['foo' => 'bar', 'bar' => 'baz', 'baz' => 'qux', 'qux' => null], $repo->get([
+            'foo',
+            'bar',
+            'baz',
+            'qux',
+        ]));
         $repo->forgetDefault('foo');
         $this->assertNull($repo->getDefault('foo'));
         $repo->forgetDefault(['bar', 'baz']);

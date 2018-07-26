@@ -16,7 +16,7 @@ class StoreEvent
      *
      * @var
      */
-    protected $scope;
+    protected $scope = '';
 
     /**
      * Get the store name.

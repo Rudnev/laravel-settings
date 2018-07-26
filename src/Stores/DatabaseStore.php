@@ -3,7 +3,6 @@
 namespace Rudnev\Settings\Stores;
 
 use Illuminate\Support\Arr;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\ConnectionInterface;
 use Rudnev\Settings\Contracts\StoreContract;
 
@@ -91,7 +90,7 @@ class DatabaseStore implements StoreContract
      *
      * @var mixed
      */
-    protected $scope;
+    protected $scope = '';
 
     /**
      * Create a new database store.
@@ -149,13 +148,7 @@ class DatabaseStore implements StoreContract
      */
     public function setScope($scope)
     {
-        if (is_null($scope)) {
-            $this->scope = null;
-
-            return;
-        }
-
-        if (is_object($scope) and method_exists($scope, 'getKey')) {
+        if (is_object($scope) && method_exists($scope, 'getKey')) {
             $this->table = $this->morphTable;
             $this->keyColumn = $this->morphKey;
             $this->valueColumn = $this->morphValue;
@@ -276,11 +269,11 @@ class DatabaseStore implements StoreContract
 
         $values = [$this->valueColumn => $value];
 
-        if (is_string($this->scope)) {
-            $values[$this->scopeColumn] = $this->scope;
-        } elseif (is_object($this->scope) && method_exists($this->scope, 'getKey')) {
+        if (is_object($this->scope) && method_exists($this->scope, 'getKey')) {
             $values[$this->morphId] = $this->scope->getKey();
             $values[$this->morphType] = get_class($this->scope);
+        } else {
+            $values[$this->scopeColumn] = $this->scope;
         }
 
         $this->table()->updateOrInsert([$this->keyColumn => $key], $values);
@@ -389,16 +382,17 @@ class DatabaseStore implements StoreContract
      */
     protected function table()
     {
-        $query = $this->connection;
+        $query = $this->connection->table($this->table);
 
-        if (is_object($this->scope) and method_exists($this->scope, 'getKey')) {
+        if (is_object($this->scope) && method_exists($this->scope, 'getKey')) {
             $model = $this->scope;
-            $query = $query->table($this->table);
-            $query = $query->where($this->morphId, $model->getKey())->where($this->morphType, get_class($model));
-        } elseif (is_string($this->scope)) {
-            $query = $query->table($this->table)->where($this->scopeColumn, $this->scope);
+            $query->where($this->morphId, $model->getKey())->where($this->morphType, get_class($model));
+        } elseif ((string) $this->scope === '') {
+            $query->where(function ($query) {
+                $query->where($this->scopeColumn, '')->orWhereNull($this->scopeColumn);
+            });
         } else {
-            $query = $query->table($this->table)->whereNull($this->scopeColumn);
+            $query->where($this->scopeColumn, $this->scope);
         }
 
         return $query;

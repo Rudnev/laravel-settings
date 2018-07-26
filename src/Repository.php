@@ -51,7 +51,7 @@ class Repository implements ArrayAccess, RepositoryContract
      *
      * @var mixed
      */
-    protected $scope;
+    protected $scope = '';
 
     /**
      * Default settings.
@@ -156,6 +156,10 @@ class Repository implements ArrayAccess, RepositoryContract
      */
     public function setScope($scope)
     {
+        if (! is_object($scope)) {
+            $scope = (string) $scope;
+        }
+
         $this->scope = $scope;
 
         if (isset($this->store)) {
