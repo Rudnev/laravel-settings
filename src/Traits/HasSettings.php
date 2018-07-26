@@ -5,16 +5,6 @@ namespace Rudnev\Settings\Traits;
 trait HasSettings
 {
     /**
-     * The settings config
-     *
-     * @var array
-     */
-    protected $settingsConfig = [
-        // The name of the store from "config/settings.php" file.
-        'store' => null,
-    ];
-
-    /**
      * The settings repository instance.
      *
      * @var \Rudnev\Settings\Contracts\RepositoryContract
@@ -31,7 +21,7 @@ trait HasSettings
         if (is_null($this->settingsRepo)) {
             $store = $this->settingsConfig['store'] ?? null;
 
-            $this->settingsRepo = settings()->store($store)->scope($this, $this->settingsConfig);
+            $this->settingsRepo = settings()->store($store)->scope($this, $this->settingsConfig ?? null);
         }
 
         if (is_null($key)) {

@@ -125,6 +125,28 @@ class RepositoryTest extends TestCase
         $this->assertEquals('foo', $repo->getScope());
     }
 
+    public function testDefaultValuesCanBeSetAndRetrieved()
+    {
+        $repo = $this->getRepository();
+        $repo->setStore(new ArrayStore());
+        $this->assertNull($repo->getDefault('foo'));
+        $this->assertEquals([], $repo->getDefault());
+        $repo->setDefault('foo', 'bar');
+        $repo->setDefault(['bar' => 'baz', 'baz' => 'qux']);
+        $this->assertEquals('bar', $repo->getDefault('foo'));
+        $this->assertEquals(['foo' => 'bar', 'bar' => 'baz', 'baz' => 'qux'], $repo->getDefault());
+        $this->assertEquals('bar', $repo->get('foo'));
+        $this->assertNull($repo->get('qux'));
+        $this->assertEquals(['foo' => 'bar', 'bar' => 'baz', 'baz' => 'qux', 'qux' => null], $repo->get(['foo', 'bar', 'baz', 'qux']));
+        $repo->forgetDefault('foo');
+        $this->assertNull($repo->getDefault('foo'));
+        $repo->forgetDefault(['bar', 'baz']);
+        $this->assertEquals([], $repo->getDefault());
+        $repo->setDefault('qux', 'pax');
+        $repo->forgetDefault();
+        $this->assertEquals([], $repo->getDefault());
+    }
+
     public function testRegisterMacroWithNonStaticCall()
     {
         $repo = $this->getRepository();

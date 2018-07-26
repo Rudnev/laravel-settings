@@ -38,6 +38,8 @@ class HasSettingsTest extends TestCase
 
         $model->settings(['foo' => 1, 'bar' => 2]);
         $this->assertEquals($model->settings('foo'), 1);
+
+        $this->assertEquals('qux-default', $model->settings('qux'));
     }
 
     protected function getModel()
@@ -45,6 +47,12 @@ class HasSettingsTest extends TestCase
         return new class
         {
             use HasSettings;
+
+            protected $settingsConfig = [
+              'default' => [
+                  'qux' => 'qux-default'
+              ]
+            ];
 
             public function getKey()
             {

@@ -2,6 +2,8 @@
 
 
 [![Build Status](https://travis-ci.org/Rudnev/laravel-settings.svg?branch=master)](https://travis-ci.org/Rudnev/laravel-settings)
+[![StyleCI](https://github.styleci.io/repos/141638505/shield?branch=master&style=flat)](https://github.styleci.io/repos/141638505)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 Persistent settings for Laravel Framework 
 
@@ -166,8 +168,8 @@ Settings::scope($user)->get('language');
 Alternatively, you can add `Rudnev\Settings\Trait\HasSettings` trait to your model, for example:
 
 ```php
-use Illuminate\Database\Eloquent\Model;
 use Rudnev\Settings\Trait\HasSettings;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Model 
 {
@@ -189,22 +191,35 @@ $user->settings(['language' => 'en']);
 $user->settings('language');
 ```
 
-If you want specify the store from `config/settings.php`, override `$settingsConfig` array:
+To set the default settings define `$settingsConfig` property as array with `default` key:
 
 ```php
-use Illuminate\Database\Eloquent\Model;
 use Rudnev\Settings\Trait\HasSettings;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Model 
 {
     use HasSettings;
     
     protected $settingsConfig = [
-        'store' => 'database'
+        'default' => [
+            'timezone' => 'UTC'
+        ]
     ];
     
     // ...
 }
+```
+
+And if you want specify the store from `config/settings.php`, use `store` option:
+```php
+protected $settingsConfig = [
+    'store' => 'database',
+	
+    'default' => [
+        'timezone' => 'UTC'
+    ]
+];
 ```
 
 > Attention: The cache is only available for global settings and is not available for scopes. You must take care of this yourself.

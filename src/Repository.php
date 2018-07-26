@@ -54,6 +54,13 @@ class Repository implements ArrayAccess, RepositoryContract
     protected $scope;
 
     /**
+     * Default settings.
+     *
+     * @var array
+     */
+    protected $default = [];
+
+    /**
      * Create a new settings repository instance.
      *
      * @param  \Rudnev\Settings\Contracts\StoreContract $store
@@ -159,6 +166,64 @@ class Repository implements ArrayAccess, RepositoryContract
     }
 
     /**
+     * Get the default value.
+     *
+     * @param string $key
+     * @return array
+     */
+    public function getDefault($key = null)
+    {
+        if (isset($key)) {
+            return value($this->default[$key] ?? null);
+        }
+
+        return $this->default;
+    }
+
+    /**
+     * Set the default value.
+     *
+     * @param array|string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function setDefault($key, $value = null)
+    {
+        if (is_array($key)) {
+            $this->default = array_merge($this->default, $key);
+
+            return;
+        }
+
+        $this->default[$key] = $value;
+    }
+
+    /**
+     * Remove the default value.
+     *
+     * @param array|string $key
+     * @return void
+     */
+    public function forgetDefault($key = null)
+    {
+        if (is_null($key)) {
+            $this->default = [];
+
+            return;
+        }
+
+        if (is_array($key)) {
+            foreach ($key as $item) {
+                unset($this->default[$item]);
+            }
+
+            return;
+        }
+
+        unset($this->default[$key]);
+    }
+
+    /**
      * Determine if an item exists in the settings store.
      *
      * @param  string $key
@@ -190,7 +255,7 @@ class Repository implements ArrayAccess, RepositoryContract
         if (is_null($value)) {
             $this->event(new PropertyMissed($key));
 
-            $value = value($default);
+            $value = isset($default) ? value($default) : $this->getDefault($key);
         } else {
             $this->event(new PropertyReceived($key, $value));
         }
@@ -218,7 +283,7 @@ class Repository implements ArrayAccess, RepositoryContract
             if (is_null($value)) {
                 $this->event(new PropertyMissed($key));
 
-                return isset($keys[$key]) ? value($keys[$key]) : null;
+                return isset($keys[$key]) ? value($keys[$key]) : $this->getDefault($key);
             }
 
             $this->event(new PropertyReceived($key, $value));
@@ -346,6 +411,10 @@ class Repository implements ArrayAccess, RepositoryContract
         $repo = clone $this;
 
         $repo->setScope($scope);
+
+        $repo->forgetDefault();
+
+        $repo->setDefault($options['default'] ?? []);
 
         return $repo;
     }
