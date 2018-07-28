@@ -3,9 +3,9 @@
 namespace Rudnev\Settings;
 
 use ArrayAccess;
+use Illuminate\Support\Arr;
 use Rudnev\Settings\Cache\Cache;
 use Rudnev\Settings\Events\StoreEvent;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Traits\Macroable;
 use Rudnev\Settings\Events\PropertyMissed;
 use Rudnev\Settings\Events\PropertyRemoved;
