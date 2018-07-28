@@ -104,8 +104,7 @@ trait HasSettings
         if (is_null($value)) {
             $this->settingsAttribute = $value;
         } else {
-            $this->settingsAttribute = new class($value) extends ArrayObject
-            {
+            $this->settingsAttribute = new class($value) extends ArrayObject {
                 protected $default = [];
 
                 public function offsetGet($key)
