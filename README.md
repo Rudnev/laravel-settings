@@ -160,12 +160,12 @@ If you want to have settings for your model you can use `scope` method:
 ```php
 $user = auth()->user();
 
-Settings::scope($user)->set('language', 'en');
+Settings::scope($user)->set('lang', 'en');
 
-Settings::scope($user)->get('language');
+Settings::scope($user)->get('lang');
 ```
  
-Alternatively, you can add `Rudnev\Settings\Trait\HasSettings` trait to your model, for example:
+But instead, it's better to use the `Rudnev\Settings\Trait\HasSettings` trait, for example:
 
 ```php
 use Rudnev\Settings\Trait\HasSettings;
@@ -179,16 +179,30 @@ class User extends Model
 }
 ```
 
-Now you can use `settings` method to set and get values:
+Now you can use `settings` property to set and get values:
 
 ```php
-$user->settings()->set('language', 'en');
-$user->settings()->get('language');
+$user = new User();
+$user->settings = ['lang' => 'en'];
+$user->save();
+
+print_r($user->settings);
+echo $user->settings['lang'];
+
+$user->settings['timezone'] = 'UTC';
+$user->save();
+```
+
+Also, `settings` method provides direct access to the settings store (but model state will not be updated):
+
+```php
+$user->settings()->set('lang', 'en');
+$user->settings()->get('lang');
 
 // the same:
 
-$user->settings(['language' => 'en']);
-$user->settings('language');
+$user->settings(['lang' => 'en']);
+$user->settings('lang');
 ```
 
 To set the default settings define `$settingsConfig` property as array with `default` key:
@@ -221,6 +235,16 @@ protected $settingsConfig = [
     ]
 ];
 ```
+
+In addition to the scopes for models, you can freely create scopes for your application settings, for example:
+```php
+// Set
+Settings::scope('my-landing-page')->set('tracking_id', 'UA-000000-2');
+
+// Get
+Settings::scope('my-landing-page')->get('tracking_id');
+```
+
 
 > Attention: The cache is only available for global settings and is not available for scopes. You must take care of this yourself.
 
