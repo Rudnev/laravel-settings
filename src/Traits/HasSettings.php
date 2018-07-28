@@ -104,7 +104,22 @@ trait HasSettings
         if (is_null($value)) {
             $this->settingsAttribute = $value;
         } else {
-            $this->settingsAttribute = new ArrayObject($value);
+            $this->settingsAttribute = new class($value) extends ArrayObject
+            {
+                protected $default = [];
+
+                public function offsetGet($key)
+                {
+                    return $this->offsetExists($key) ? parent::offsetGet($key) : value(array_get($this->default, $key));
+                }
+
+                public function setDefault($value)
+                {
+                    $this->default = $value;
+                }
+            };
+
+            $this->settingsAttribute->setDefault($this->settingsConfig['default'] ?? []);
         }
     }
 

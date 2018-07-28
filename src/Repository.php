@@ -5,6 +5,7 @@ namespace Rudnev\Settings;
 use ArrayAccess;
 use Rudnev\Settings\Cache\Cache;
 use Rudnev\Settings\Events\StoreEvent;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Traits\Macroable;
 use Rudnev\Settings\Events\PropertyMissed;
 use Rudnev\Settings\Events\PropertyRemoved;
@@ -178,7 +179,7 @@ class Repository implements ArrayAccess, RepositoryContract
     public function getDefault($key = null)
     {
         if (isset($key)) {
-            return value($this->default[$key] ?? null);
+            return value(Arr::get($this->default, $key));
         }
 
         return $this->default;
