@@ -196,11 +196,9 @@ class Repository implements ArrayAccess, RepositoryContract
     {
         if (is_array($key)) {
             $this->default = array_merge($this->default, $key);
-
-            return;
+        } else {
+            $this->default[$key] = $value;
         }
-
-        $this->default[$key] = $value;
     }
 
     /**

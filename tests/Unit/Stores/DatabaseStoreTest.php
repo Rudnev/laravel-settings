@@ -27,7 +27,15 @@ class DatabaseStoreTest extends TestCase
         $table = m::mock('stdClass');
 
         $store->getConnection()->shouldReceive('table')->once()->with('table')->andReturn($table);
-        $table->shouldReceive('where')->once()->with(m::type(Closure::class))->andReturn($table);
+        $table->shouldReceive('where')->once()->with(m::type(Closure::class))->andReturnUsing(function ($callback) use (
+            $table
+        ) {
+            $table->shouldReceive('where')->once()->with('scope', '')->andReturn($table);
+            $table->shouldReceive('orWhereNull')->once()->with('scope')->andReturn($table);
+            $callback($table);
+
+            return $table;
+        });
         $table->shouldReceive('where')->once()->with('key', '=', 'foo')->andReturn($table);
         $table->shouldReceive('whereNotNull')->andReturn($table);
         $table->shouldReceive('exists')->once()->andReturn(true);

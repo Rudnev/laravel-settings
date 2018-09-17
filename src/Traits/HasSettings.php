@@ -2,7 +2,7 @@
 
 namespace Rudnev\Settings\Traits;
 
-use ArrayObject;
+use Rudnev\Settings\Structures\Container;
 
 trait HasSettings
 {
@@ -79,12 +79,12 @@ trait HasSettings
             $this->settingsOriginal = $this->settings()->all();
 
             if (is_null($this->settingsAttribute)) {
-                $this->settings = $this->settingsOriginal;
+                $this->setSettingsAttribute($this->settingsOriginal);
             }
         }
 
         if (is_null($this->settingsAttribute)) {
-            $this->settings = [];
+            $this->setSettingsAttribute([]);
         }
 
         return $this->settingsAttribute;
@@ -104,20 +104,7 @@ trait HasSettings
         if (is_null($value)) {
             $this->settingsAttribute = $value;
         } else {
-            $this->settingsAttribute = new class($value) extends ArrayObject {
-                protected $default = [];
-
-                public function offsetGet($key)
-                {
-                    return $this->offsetExists($key) ? parent::offsetGet($key) : value(array_get($this->default, $key));
-                }
-
-                public function setDefault($value)
-                {
-                    $this->default = $value;
-                }
-            };
-
+            $this->settingsAttribute = new Container($value);
             $this->settingsAttribute->setDefault($this->settingsConfig['default'] ?? []);
         }
     }
