@@ -4,8 +4,8 @@ namespace Rudnev\Settings\Tests\Unit\Stores;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Rudnev\Settings\Scopes\EntityScope;
 use Rudnev\Settings\Scopes\Scope;
+use Rudnev\Settings\Scopes\EntityScope;
 use Rudnev\Settings\Stores\DatabaseStore;
 
 class DatabaseStoreTest extends TestCase
@@ -314,6 +314,7 @@ class DatabaseStoreTest extends TestCase
 
         $store->forgetMultiple(['foo', 'qux']);
     }
+
     //
     public function testItemsCanBeFlushed()
     {

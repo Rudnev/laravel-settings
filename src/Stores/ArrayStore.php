@@ -3,8 +3,8 @@
 namespace Rudnev\Settings\Stores;
 
 use Illuminate\Support\Arr;
-use Rudnev\Settings\Contracts\StoreContract;
 use Rudnev\Settings\Scopes\Scope;
+use Rudnev\Settings\Contracts\StoreContract;
 
 class ArrayStore implements StoreContract
 {
