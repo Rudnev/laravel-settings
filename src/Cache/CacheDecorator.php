@@ -165,7 +165,7 @@ class CacheDecorator implements StoreContract
     {
         $region = $this->getScope()->hash.'[has]';
 
-        return $this->firstLevelCache->region($region)->get($key, function ($key) use ($region) {
+        return (bool) $this->firstLevelCache->region($region)->get($key, function ($key) use ($region) {
             return $this->secondLevelCache->region($region)->get($key, function ($key) {
                 return $this->store->has($key);
             });
