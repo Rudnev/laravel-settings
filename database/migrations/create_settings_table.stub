@@ -56,7 +56,7 @@ class CreateSettingsTable extends Migration
             $table->primary([$this->morphEntity.'_id', $this->morphEntity.'_type', $this->morphKey]);
         });
 
-		app('cache')->forget('laravel-settings');
+		app('settings')->clearCache();
     }
 
     /**

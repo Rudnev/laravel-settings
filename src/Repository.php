@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rudnev\Settings;
 
 use ArrayAccess;
 use Illuminate\Support\Arr;
-use Rudnev\Settings\Cache\Cache;
 use Rudnev\Settings\Events\StoreEvent;
 use Illuminate\Support\Traits\Macroable;
 use Rudnev\Settings\Events\PropertyMissed;
@@ -16,6 +17,8 @@ use Rudnev\Settings\Events\AllSettingsRemoved;
 use Rudnev\Settings\Events\AllSettingsReceived;
 use Rudnev\Settings\Contracts\RepositoryContract;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Rudnev\Settings\Scopes\EntityScope;
+use Rudnev\Settings\Scopes\Scope;
 
 /**
  * @mixin \Rudnev\Settings\Contracts\StoreContract
@@ -34,11 +37,11 @@ class Repository implements ArrayAccess, RepositoryContract
     protected $store;
 
     /**
-     * The cache instance.
+     * The scope.
      *
-     * @var \Rudnev\Settings\Cache\Cache
+     * @var \Rudnev\Settings\Scopes\Scope
      */
-    protected $cache;
+    protected $scope;
 
     /**
      * The event dispatcher instance.
@@ -46,13 +49,6 @@ class Repository implements ArrayAccess, RepositoryContract
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $events;
-
-    /**
-     * The scope.
-     *
-     * @var mixed
-     */
-    protected $scope = '';
 
     /**
      * Default settings.
@@ -64,12 +60,13 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Create a new settings repository instance.
      *
-     * @param  \Rudnev\Settings\Contracts\StoreContract $store
+     * @param \Rudnev\Settings\Contracts\StoreContract $store
      * @return void
      */
     public function __construct(StoreContract $store)
     {
         $this->store = $store;
+        $this->scope = new Scope();
     }
 
     /**
@@ -77,7 +74,7 @@ class Repository implements ArrayAccess, RepositoryContract
      *
      * @return \Rudnev\Settings\Contracts\StoreContract
      */
-    public function getStore()
+    public function getStore(): StoreContract
     {
         return $this->store;
     }
@@ -88,63 +85,17 @@ class Repository implements ArrayAccess, RepositoryContract
      * @param \Rudnev\Settings\Contracts\StoreContract $store
      * @return void
      */
-    public function setStore(StoreContract $store)
+    public function setStore(StoreContract $store): void
     {
         $this->store = $store->scope($this->scope);
     }
 
     /**
-     * Get the cache instance.
-     *
-     * @return \Rudnev\Settings\Cache\Cache
-     */
-    public function getCache()
-    {
-        return $this->cache;
-    }
-
-    /**
-     * Set the cache instance.
-     *
-     * @param \Rudnev\Settings\Cache\Cache $cache
-     * @return void
-     */
-    public function setCache(Cache $cache)
-    {
-        $cache->load(function () {
-            return $this->store->all();
-        });
-
-        $this->cache = $cache;
-    }
-
-    /**
-     * Get the event dispatcher instance.
-     *
-     * @return  \Illuminate\Contracts\Events\Dispatcher $dispatcher
-     */
-    public function getEventDispatcher()
-    {
-        return $this->events;
-    }
-
-    /**
-     * Set the event dispatcher implementation.
-     *
-     * @param  \Illuminate\Contracts\Events\Dispatcher $dispatcher
-     * @return void
-     */
-    public function setEventDispatcher(DispatcherContract $dispatcher)
-    {
-        $this->events = $dispatcher;
-    }
-
-    /**
      * Get the scope.
      *
-     * @return mixed
+     * @return \Rudnev\Settings\Scopes\Scope
      */
-    public function getScope()
+    public function getScope(): Scope
     {
         return $this->scope;
     }
@@ -152,31 +103,48 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Set the scope.
      *
-     * @param mixed
+     * @param mixed $scope
      * @return void
      */
-    public function setScope($scope)
+    public function setScope($scope): void
     {
-        if (! is_object($scope)) {
-            $scope = (string) $scope;
+        if (is_object($scope) && method_exists($scope, 'getKey')) {
+            $this->scope = new EntityScope(get_class($scope), (string) $scope->getKey());
+        } else {
+            $this->scope = new Scope((string) $scope);
         }
 
-        $this->scope = $scope;
+        $this->store = $this->store->scope($this->scope);
+    }
 
-        if (isset($this->store)) {
-            $this->store = $this->store->scope($scope);
-        }
+    /**
+     * Get the event dispatcher instance.
+     *
+     * @return \Illuminate\Contracts\Events\Dispatcher
+     */
+    public function getEventDispatcher(): DispatcherContract
+    {
+        return $this->events;
+    }
 
-        $this->cache = null;
+    /**
+     * Set the event dispatcher implementation.
+     *
+     * @param \Illuminate\Contracts\Events\Dispatcher $dispatcher
+     * @return void
+     */
+    public function setEventDispatcher(DispatcherContract $dispatcher): void
+    {
+        $this->events = $dispatcher;
     }
 
     /**
      * Get the default value.
      *
      * @param string $key
-     * @return array
+     * @return mixed
      */
-    public function getDefault($key = null)
+    public function getDefault(string $key = null)
     {
         if (isset($key)) {
             return value(Arr::get($this->default, $key));
@@ -192,7 +160,7 @@ class Repository implements ArrayAccess, RepositoryContract
      * @param mixed $value
      * @return void
      */
-    public function setDefault($key, $value = null)
+    public function setDefault($key, $value = null): void
     {
         if (is_array($key)) {
             $this->default = array_merge($this->default, $key);
@@ -207,7 +175,7 @@ class Repository implements ArrayAccess, RepositoryContract
      * @param array|string $key
      * @return void
      */
-    public function forgetDefault($key = null)
+    public function forgetDefault($key = null): void
     {
         if (is_null($key)) {
             $this->default = [];
@@ -229,19 +197,19 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Determine if an item exists in the settings store.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
-    public function has($key)
+    public function has($key): bool
     {
-        return $this->data()->has($key);
+        return $this->store->has($key);
     }
 
     /**
      * Retrieve an item from the settings store by key.
      *
-     * @param  string|iterable $key
-     * @param  mixed $default
+     * @param string|iterable $key
+     * @param mixed $default
      * @return mixed
      */
     public function get($key, $default = null)
@@ -250,7 +218,7 @@ class Repository implements ArrayAccess, RepositoryContract
             return $this->getMultiple($key);
         }
 
-        $value = $this->data()->get($key);
+        $value = $this->store->get($key);
 
         // If we could not find the settings value, we will fire the missed event and get
         // the default value for this settings value. This default could be a callback
@@ -271,16 +239,16 @@ class Repository implements ArrayAccess, RepositoryContract
      *
      * Items not found in the settings store will have a null value.
      *
-     * @param  iterable $keys
+     * @param iterable $keys
      * @return array
      */
-    protected function getMultiple(iterable $keys)
+    protected function getMultiple(iterable $keys): array
     {
         $keyList = collect($keys)->map(function ($value, $key) {
             return is_string($key) ? $key : $value;
         })->values()->all();
 
-        $values = $this->data()->getMultiple($keyList);
+        $values = $this->store->getMultiple($keyList);
 
         return collect($values)->map(function ($value, $key) use ($keys) {
             if (is_null($value)) {
@@ -300,9 +268,9 @@ class Repository implements ArrayAccess, RepositoryContract
      *
      * @return array
      */
-    public function all()
+    public function all(): array
     {
-        $data = $this->data()->all();
+        $data = $this->store->all();
 
         $this->event(new AllSettingsReceived());
 
@@ -312,11 +280,11 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Store an item in the settings store.
      *
-     * @param  string|iterable $key
-     * @param  mixed|null $value
+     * @param string|iterable $key
+     * @param mixed|null $value
      * @return $this
      */
-    public function set($key, $value = null)
+    public function set($key, $value = null): self
     {
         if (is_iterable($key)) {
             return $this->setMultiple($key);
@@ -332,10 +300,10 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Store multiple items in the settings store.
      *
-     * @param  iterable $values
+     * @param iterable $values
      * @return $this
      */
-    protected function setMultiple(iterable $values)
+    protected function setMultiple(iterable $values): self
     {
         $this->store->setMultiple($values);
 
@@ -352,7 +320,7 @@ class Repository implements ArrayAccess, RepositoryContract
      * @param  string|iterable $key
      * @return bool
      */
-    public function forget($key)
+    public function forget($key): bool
     {
         if (is_iterable($key)) {
             return $this->forgetMultiple($key);
@@ -373,7 +341,7 @@ class Repository implements ArrayAccess, RepositoryContract
      * @param  iterable $keys
      * @return bool
      */
-    protected function forgetMultiple(iterable $keys)
+    protected function forgetMultiple(iterable $keys): bool
     {
         $success = $this->store->forgetMultiple($keys);
 
@@ -391,7 +359,7 @@ class Repository implements ArrayAccess, RepositoryContract
      *
      * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         $success = $this->store->flush();
 
@@ -423,22 +391,12 @@ class Repository implements ArrayAccess, RepositoryContract
     }
 
     /**
-     * Get the cache if it's enabled, otherwise the settings store.
-     *
-     * @return \Rudnev\Settings\Contracts\StoreContract
-     */
-    protected function data()
-    {
-        return $this->cache ?? $this->store;
-    }
-
-    /**
      * Fire an event for this settings instance.
      *
-     * @param  object $event
+     * @param object $event
      * @return void
      */
-    protected function event($event)
+    protected function event($event): void
     {
         if (! isset($this->events)) {
             return;
@@ -455,10 +413,10 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Determine if a value exists.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return $this->has($key);
     }
@@ -466,7 +424,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Retrieve an item from the settings store by key.
      *
-     * @param  string $key
+     * @param string $key
      * @return mixed
      */
     public function offsetGet($key)
@@ -477,11 +435,11 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Store an item in the settings store.
      *
-     * @param  string $key
-     * @param  mixed $value
+     * @param string $key
+     * @param mixed $value
      * @return void
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         $this->set($key, $value);
     }
@@ -489,10 +447,10 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Remove an item from the settings store.
      *
-     * @param  string $key
+     * @param string $key
      * @return void
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         $this->forget($key);
     }
@@ -500,8 +458,8 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Handle dynamic calls into macros or pass missing methods to the store.
      *
-     * @param  string $method
-     * @param  array $parameters
+     * @param string $method
+     * @param array $parameters
      * @return mixed
      */
     public function __call($method, $parameters)
@@ -521,9 +479,5 @@ class Repository implements ArrayAccess, RepositoryContract
     public function __clone()
     {
         $this->store = clone $this->store;
-
-        if (is_object($this->cache)) {
-            $this->cache = clone $this->cache;
-        }
     }
 }

@@ -4,10 +4,8 @@ namespace Rudnev\Settings\Tests\Unit;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Rudnev\Settings\Cache\Cache;
+use Rudnev\Settings\Scopes\Scope;
 use Rudnev\Settings\Stores\ArrayStore;
-use Illuminate\Cache\Repository as CacheRepo;
-use Illuminate\Cache\ArrayStore as CacheRepoStore;
 
 class RepositoryTest extends TestCase
 {
@@ -22,14 +20,6 @@ class RepositoryTest extends TestCase
         $store = new ArrayStore();
         $repo->setStore($store);
         $this->assertEquals($store, $repo->getStore());
-    }
-
-    public function testCacheCanBeSetAndRetrieved()
-    {
-        $repo = $this->getRepository();
-        $cache = new Cache(new CacheRepo(new CacheRepoStore()));
-        $repo->setCache($cache);
-        $this->assertEquals($cache, $repo->getCache());
     }
 
     public function testGetReturnsValue()
@@ -119,10 +109,10 @@ class RepositoryTest extends TestCase
     public function testScope()
     {
         $repo = $this->getRepository();
-        $this->assertEquals('', $repo->getScope());
+        $this->assertEquals('default', $repo->getScope()->hash);
         $repo->getStore()->shouldReceive('scope')->with('foo');
         $this->assertNotEquals(spl_object_id($repo), spl_object_id($repo = $repo->scope('foo')));
-        $this->assertEquals('foo', $repo->getScope());
+        $this->assertEquals('foo', $repo->getScope()->hash);
     }
 
     public function testDefaultValuesCanBeSetAndRetrieved()
@@ -171,18 +161,16 @@ class RepositoryTest extends TestCase
         $repo->getStore()->shouldReceive('get')->with('foo')->andReturn('qux');
         $this->assertEquals($repo->get('foo'), $repo['foo']);
         $this->assertEquals($repo->get('foo'), 'qux');
-        $repo->getStore()->shouldReceive('forget')->with('foo');
+        $repo->getStore()->shouldReceive('forget')->once()->with('foo')->andReturn(true);
         unset($repo['foo']);
     }
 
     public function testCloning()
     {
         $repo = $this->getRepository();
-        $repo->setCache(m::spy('Rudnev\Settings\Cache\Cache'));
         $repo->setStore(new ArrayStore());
         $repo2 = clone $repo;
         $this->assertNotEquals(spl_object_id($repo->getStore()), spl_object_id($repo2->getStore()));
-        $this->assertNotEquals(spl_object_id($repo->getCache()), spl_object_id($repo2->getCache()));
     }
 
     protected function getRepository()

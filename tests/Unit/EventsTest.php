@@ -5,6 +5,7 @@ namespace Rudnev\Settings\Tests\Unit;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Rudnev\Settings\Repository;
+use Rudnev\Settings\Scopes\Scope;
 use Rudnev\Settings\Stores\ArrayStore;
 use Rudnev\Settings\Events\PropertyMissed;
 use Rudnev\Settings\Events\PropertyRemoved;
@@ -84,8 +85,8 @@ class EventsTest extends TestCase
     public function testScopeCanBeSetAndRetrieved()
     {
         $event = new PropertyWritten('foo', 'bar');
-        $event->setScope('foo');
-        $this->assertEquals('foo', $event->getScope());
+        $event->setScope($scope = new Scope('foo'));
+        $this->assertEquals($scope, $event->getScope());
     }
 
     protected function assertEventMatches($eventClass, $properties = [])

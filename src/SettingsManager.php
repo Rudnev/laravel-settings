@@ -5,11 +5,13 @@ namespace Rudnev\Settings;
 use Closure;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Rudnev\Settings\Cache\Cache;
 use Illuminate\Events\Dispatcher;
+use Rudnev\Settings\Cache\CacheDecorator;
+use Rudnev\Settings\Cache\L1\FirstLevelCache;
+use Rudnev\Settings\Cache\L2\SecondLevelCache;
+use Rudnev\Settings\Scopes\Scope;
 use Rudnev\Settings\Stores\ArrayStore;
 use Rudnev\Settings\Stores\DatabaseStore;
-use Rudnev\Settings\Cache\EventSubscriber;
 use Rudnev\Settings\Contracts\StoreContract;
 use Rudnev\Settings\Contracts\FactoryContract;
 use Illuminate\Contracts\Cache\Factory as CacheFactoryContract;
@@ -133,10 +135,9 @@ class SettingsManager implements FactoryContract
      * Create an instance of the array store.
      *
      * @param string $name
-     * @param  array $config
      * @return \Rudnev\Settings\Repository
      */
-    protected function createArrayStore($name, array $config)
+    protected function createArrayStore($name)
     {
         $store = new ArrayStore();
 
@@ -160,72 +161,129 @@ class SettingsManager implements FactoryContract
 
         $store->setName($name);
 
-        $cache = $this->makeCache($config['cache'] ?? null);
+        $store = $this->makeCacheWrapper($store, $config['cache'] ?? null);
 
-        return $this->repository($store, $cache);
+        $this->preloadScopes($config['scopes']['preload'] ?? [], $store);
+
+        $repository = $this->repository($store);
+
+        $repository->setScope($config['scopes']['default'] ?? 'default');
+
+        return $repository;
+    }
+
+    /**
+     * Preload scopes.
+     *
+     * @param array $scopes
+     * @param \Rudnev\Settings\Contracts\StoreContract $store
+     * @return void
+     */
+    public function preloadScopes(array $scopes, StoreContract $store): void
+    {
+        if ($store instanceof CacheDecorator) {
+            foreach ($scopes as $scope) {
+                $store->scope(new Scope($scope))->all();
+            }
+        }
     }
 
     /**
      * Create a new settings repository with the given implementation.
      *
      * @param  \Rudnev\Settings\Contracts\StoreContract $store
-     * @param  \Rudnev\Settings\Cache\Cache
      * @return \Rudnev\Settings\Repository
      */
-    public function repository(StoreContract $store, Cache $cache = null)
+    public function repository(StoreContract $store)
     {
         $repository = new Repository($store);
 
-        $this->addEventDispatcher($repository);
-
-        $this->addCache($repository, $cache);
+        $repository->setEventDispatcher($this->getEventDispatcher());
 
         return $repository;
     }
 
     /**
-     * Set the event dispatcher instance to the settings repository.
+     * Get the event dispatcher instance.
      *
-     * @param \Rudnev\Settings\Repository $repository
-     * @return void
+     * @return \Illuminate\Contracts\Events\Dispatcher
      */
-    protected function addEventDispatcher(Repository $repository)
+    protected function getEventDispatcher(): DispatcherContract
     {
         if ($this->getConfig('events')) {
-            $repository->setEventDispatcher($this->app[DispatcherContract::class]);
+            return $this->app[DispatcherContract::class];
         } else {
-            $repository->setEventDispatcher(new Dispatcher());
+            return new Dispatcher();
         }
     }
 
     /**
-     * Set the cache instance to the settings repository.
+     * Wrap the store in the cache decorator.
      *
-     * @param \Rudnev\Settings\Repository $repository
-     * @param  \Rudnev\Settings\Cache\Cache $cache
+     * @param \Rudnev\Settings\Contracts\StoreContract $store
+     * @param array $config
+     * @return \Rudnev\Settings\Cache\CacheDecorator|\Rudnev\Settings\Contracts\StoreContract
+     */
+    protected function makeCacheWrapper(StoreContract $store, array $config = [])
+    {
+        if (empty($config['enabled'])) {
+            return $store;
+        }
+
+        return new CacheDecorator($store, $this->getFirstLevelCache(), $this->getSecondLevelCache($store, $config));
+    }
+
+    /**
+     * Get the first level cache instance.
+     *
+     * @return \Rudnev\Settings\Cache\L1\FirstLevelCache
+     */
+    public function getFirstLevelCache(): FirstLevelCache
+    {
+        return new FirstLevelCache();
+    }
+
+    /**
+     * Get the second level cache instance.
+     *
+     * @param \Rudnev\Settings\Contracts\StoreContract|string $store
+     * @param array|null $config
+     * @return \Rudnev\Settings\Cache\L2\SecondLevelCache
+     */
+    public function getSecondLevelCache($store, array $config = null): SecondLevelCache
+    {
+        $repository = $this->app[CacheFactoryContract::class]->store($config['store'] ?? null);
+
+        $secondLevelCache = new SecondLevelCache($repository);
+
+        $storeName = $store instanceof StoreContract ? $store->getName() : $store;
+
+        $secondLevelCache->setPrefix(sprintf('%s.%s', $config['prefix'] ?? 'ls', $storeName));
+
+        $secondLevelCache->setDefaultLifetime((int) $config['ttl'] ?? null);
+
+        return $secondLevelCache;
+    }
+
+    /**
+     * Clear the cache.
+     *
      * @return void
      */
-    protected function addCache(Repository $repository, Cache $cache = null)
+    public function clearCache(): void
     {
-        if ($cache) {
-            $repository->setCache($cache);
+        foreach ($this->stores as $repo) {
+            $store = $repo->getStore();
 
-            $repository->getEventDispatcher()->subscribe(new EventSubscriber($cache));
+            if ($store instanceof CacheDecorator) {
+                $store->getFirstLevelCache()->flush();
+            }
         }
-    }
 
-    /**
-     * Make a cache instance.
-     *
-     * @param array $config
-     * @return \Rudnev\Settings\Cache\Cache|null
-     */
-    protected function makeCache(array $config = [])
-    {
-        if (! empty($config['enabled'])) {
-            $repo = $this->app[CacheFactoryContract::class]->store($config['store'] ?? null);
-
-            return new Cache($repo, $config['ttl'] ?? null);
+        foreach ($this->getConfig('stores') as $name => $config) {
+            if (! empty($config['cache'])) {
+                $this->getSecondLevelCache($name, $config['cache'])->flush();
+            }
         }
     }
 

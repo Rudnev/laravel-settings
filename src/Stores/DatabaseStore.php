@@ -5,6 +5,8 @@ namespace Rudnev\Settings\Stores;
 use Illuminate\Support\Arr;
 use Illuminate\Database\ConnectionInterface;
 use Rudnev\Settings\Contracts\StoreContract;
+use Rudnev\Settings\Scopes\EntityScope;
+use Rudnev\Settings\Scopes\Scope;
 
 class DatabaseStore implements StoreContract
 {
@@ -88,9 +90,9 @@ class DatabaseStore implements StoreContract
     /**
      * The scope.
      *
-     * @var mixed
+     * @var \Rudnev\Settings\Scopes\Scope
      */
-    protected $scope = '';
+    protected $scope;
 
     /**
      * Create a new database store.
@@ -112,6 +114,8 @@ class DatabaseStore implements StoreContract
         $this->morphType = $names['settings_models']['entity'].'_type';
         $this->morphKey = $names['settings_models']['key'];
         $this->morphValue = $names['settings_models']['value'];
+
+        $this->scope = new Scope();
     }
 
     /**
@@ -133,9 +137,9 @@ class DatabaseStore implements StoreContract
     /**
      * Get the scope.
      *
-     * @return mixed
+     * @return \Rudnev\Settings\Scopes\Scope
      */
-    public function getScope()
+    public function getScope(): Scope
     {
         return $this->scope;
     }
@@ -143,17 +147,15 @@ class DatabaseStore implements StoreContract
     /**
      * Set the scope.
      *
-     * @param mixed
+     * @param \Rudnev\Settings\Scopes\Scope $scope
      * @return void
      */
-    public function setScope($scope)
+    public function setScope(Scope $scope)
     {
-        if (is_object($scope) && method_exists($scope, 'getKey')) {
+        if ($scope instanceof EntityScope) {
             $this->table = $this->morphTable;
             $this->keyColumn = $this->morphKey;
             $this->valueColumn = $this->morphValue;
-        } else {
-            $scope = (string) $scope;
         }
 
         $this->scope = $scope;
@@ -269,11 +271,11 @@ class DatabaseStore implements StoreContract
 
         $values = [$this->valueColumn => $value];
 
-        if (is_object($this->scope) && method_exists($this->scope, 'getKey')) {
-            $values[$this->morphId] = $this->scope->getKey();
-            $values[$this->morphType] = get_class($this->scope);
+        if ($this->scope instanceof EntityScope) {
+            $values[$this->morphId] = $this->scope->entityId;
+            $values[$this->morphType] = $this->scope->entityClass;
         } else {
-            $values[$this->scopeColumn] = $this->scope;
+            $values[$this->scopeColumn] = $this->scope->hash;
         }
 
         $this->table()->updateOrInsert([$this->keyColumn => $key], $values);
@@ -366,7 +368,7 @@ class DatabaseStore implements StoreContract
     /**
      * {@inheritdoc}
      */
-    public function scope($scope): StoreContract
+    public function scope(Scope $scope): StoreContract
     {
         $store = clone $this;
 
@@ -384,15 +386,10 @@ class DatabaseStore implements StoreContract
     {
         $query = $this->connection->table($this->table);
 
-        if (is_object($this->scope) && method_exists($this->scope, 'getKey')) {
-            $model = $this->scope;
-            $query->where($this->morphId, $model->getKey())->where($this->morphType, get_class($model));
-        } elseif ((string) $this->scope === '') {
-            $query->where(function ($query) {
-                $query->where($this->scopeColumn, '')->orWhereNull($this->scopeColumn);
-            });
+        if ($this->scope instanceof EntityScope) {
+            $query->where($this->morphId, $this->scope->entityId)->where($this->morphType, $this->scope->entityClass);
         } else {
-            $query->where($this->scopeColumn, $this->scope);
+            $query->where($this->scopeColumn, $this->scope->hash);
         }
 
         return $query;

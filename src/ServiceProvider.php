@@ -17,8 +17,10 @@ class ServiceProvider extends BaseProvider
 
     /**
      * Bootstrap the application events.
+     *
+     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__.'/../config/settings.php' => config_path('settings.php'),
@@ -35,8 +37,10 @@ class ServiceProvider extends BaseProvider
 
     /**
      * Register the service provider.
+     *
+     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/settings.php', 'settings');
 
@@ -48,6 +52,16 @@ class ServiceProvider extends BaseProvider
             return $app['settings']->store();
         });
 
+        $this->addAliases();
+    }
+
+    /**
+     * Add aliases.
+     *
+     * @return void
+     */
+    public function addAliases(): void
+    {
         $this->app->alias('settings', FactoryContract::class);
         $this->app->alias('settings', SettingsManager::class);
         $this->app->alias('settings.store', RepositoryContract::class);
@@ -59,7 +73,7 @@ class ServiceProvider extends BaseProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return [
             'settings',

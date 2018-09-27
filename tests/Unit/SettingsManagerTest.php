@@ -6,6 +6,9 @@ use Mockery as m;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Config\Repository;
+use Rudnev\Settings\Cache\CacheDecorator;
+use Rudnev\Settings\Cache\L1\FirstLevelCache;
+use Rudnev\Settings\Cache\L2\SecondLevelCache;
 use Rudnev\Settings\SettingsManager;
 use Rudnev\Settings\Stores\ArrayStore;
 use Illuminate\Contracts\Cache\Factory;
@@ -62,7 +65,8 @@ class SettingsManagerTest extends TestCase
         $this->assertEquals('foo', $repo->getName());
 
         $repo = $manager->store('bar');
-        $this->assertInstanceOf(DatabaseStore::class, $repo->getStore());
+        $this->assertInstanceOf(CacheDecorator::class, $repo->getStore());
+        $this->assertInstanceOf(DatabaseStore::class, $repo->getStore()->getStore());
         $this->assertEquals('bar', $repo->getName());
 
         $manager->store('foo');
@@ -85,11 +89,52 @@ class SettingsManagerTest extends TestCase
         $app = $this->getApp($this->getConfig());
 
         $manager = new SettingsManager($app);
-        $this->assertNotNull($manager->store('bar')->getCache());
+        $this->assertInstanceOf(CacheDecorator::class, $manager->store('bar')->getStore());
 
         $manager = new SettingsManager($app);
         $app['config']['settings.stores.bar.cache.enabled'] = false;
-        $this->assertNull($manager->store('bar')->getCache());
+        $this->assertNotInstanceOf(CacheDecorator::class, $manager->store('bar')->getStore());
+    }
+
+    public function testCacheCanBeCleared()
+    {
+        $app = $this->getApp($this->getConfig());
+        $manager = new SettingsManager($app);
+        $store = $manager->store('bar')->getStore();
+        $data = [];
+        $this->bindData($store->getSecondLevelCache()->getStore(), $data);
+
+        $store->getFirstLevelCache()->region('default')->put('foo', 'bar');
+        $store->getSecondLevelCache()->region('default')->put('bar', 'baz');
+
+        $this->assertEquals('bar', $store->getFirstLevelCache()->region('default')->get('foo'));
+        $this->assertEquals('baz', $store->getSecondLevelCache()->region('default')->get('bar'));
+
+        $manager->clearCache();
+
+        $this->assertNull($store->getFirstLevelCache()->region('default')->get('foo'));
+        $this->assertNull($store->getSecondLevelCache()->region('default')->get('bar'));
+    }
+
+    public function testPreloadScopes()
+    {
+        $app = $this->getApp($this->getConfig());
+        $manager = m::mock(new SettingsManager($app));
+        $cacheRepo = $app[Factory::class]->store();
+        $data = [];
+        $this->bindData($cacheRepo, $data);
+        $store = m::mock(new ArrayStore());
+        $store->shouldReceive('all')->andReturn(['foo' => 'bar']);
+        $store->shouldReceive('scope')->andReturn($store);
+        $l1 = new FirstLevelCache();
+        $l2 = new SecondLevelCache($cacheRepo);
+        $decorator = new CacheDecorator($store, $l1, $l2);
+
+        $this->assertFalse(array_search('bar', $data));
+
+        $manager->preloadScopes(['default'], $decorator);
+
+        $this->assertNotFalse(array_search('bar', $data));
     }
 
     public function testMagic()
@@ -132,6 +177,10 @@ class SettingsManagerTest extends TestCase
                             'ttl' => 1,
                             'store' => null,
                         ],
+                        'scopes' => [
+                            'default' => 'default',
+                            'preload' => [],
+                        ],
                         'names' => [
                             'settings' => [
                                 'table' => 'table',
@@ -167,9 +216,41 @@ class SettingsManagerTest extends TestCase
 
         $app->shouldReceive('bound')->with(Factory::class)->andReturnTrue();
         $cacheManager = m::spy('Illuminate\Contracts\Cache\Factory');
-        $cacheManager->shouldReceive('store')->andReturn(m::spy('Illuminate\Contracts\Cache\Repository'));
+        $cacheRepo = m::spy('Illuminate\Contracts\Cache\Repository');
+        $cacheManager->shouldReceive('store')->andReturn($cacheRepo);
         $app->shouldReceive('offsetGet')->with(Factory::class)->andReturn($cacheManager);
 
         return $app;
+    }
+
+    protected function bindData(m\MockInterface $store, array &$data)
+    {
+        $store->shouldReceive('has')->andReturnUsing(function ($key) use (&$data) {
+            return array_key_exists($key, $data);
+        });
+
+        $store->shouldReceive('get')->andReturnUsing(function ($key) use (&$data) {
+            return $data[$key] ?? null;
+        });
+
+        $store->shouldReceive('getMultiple')->andReturnUsing(function ($keys) use (&$data) {
+            return array_only($data, $keys);
+        });
+
+        $store->shouldReceive('put')->andReturnUsing(function ($key, $value) use (&$data) {
+            $data[$key] = $value;
+        });
+
+        $store->shouldReceive('setMultiple')->andReturnUsing(function ($values) use (&$data) {
+            $data = array_merge($data, $values);
+        });
+
+        $store->shouldReceive('forget')->andReturnUsing(function ($key) use (&$data) {
+            unset($data[$key]);
+        });
+
+        $store->shouldReceive('forever')->andReturnUsing(function ($key, $value) use (&$data) {
+            $data[$key] = $value;
+        });
     }
 }

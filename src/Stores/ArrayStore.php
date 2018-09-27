@@ -4,6 +4,7 @@ namespace Rudnev\Settings\Stores;
 
 use Illuminate\Support\Arr;
 use Rudnev\Settings\Contracts\StoreContract;
+use Rudnev\Settings\Scopes\Scope;
 
 class ArrayStore implements StoreContract
 {
@@ -17,7 +18,7 @@ class ArrayStore implements StoreContract
     /**
      * The scope.
      *
-     * @var mixed
+     * @var \Rudnev\Settings\Scopes\Scope
      */
     protected $scope;
 
@@ -27,6 +28,16 @@ class ArrayStore implements StoreContract
      * @var array
      */
     protected $storage = [];
+
+    /**
+     * ArrayStore constructor.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->scope = new Scope();
+    }
 
     /**
      * {@inheritdoc}
@@ -42,6 +53,27 @@ class ArrayStore implements StoreContract
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * Get the scope.
+     *
+     * @return \Rudnev\Settings\Scopes\Scope
+     */
+    public function getScope(): Scope
+    {
+        return $this->scope;
+    }
+
+    /**
+     * Set the scope.
+     *
+     * @param mixed $scope
+     * @return void
+     */
+    public function setScope(Scope $scope): void
+    {
+        $this->scope = $scope;
     }
 
     /**
@@ -135,12 +167,14 @@ class ArrayStore implements StoreContract
     /**
      * Set the scope.
      *
-     * @param $scope
+     * @param \Rudnev\Settings\Scopes\Scope $scope
      * @return \Rudnev\Settings\Contracts\StoreContract
      */
-    public function scope($scope): StoreContract
+    public function scope(Scope $scope): StoreContract
     {
         $store = clone $this;
+
+        $store->setScope($scope);
 
         $store->flush();
 

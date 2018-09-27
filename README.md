@@ -245,9 +245,6 @@ Settings::scope('my-landing-page')->set('tracking_id', 'UA-000000-2');
 Settings::scope('my-landing-page')->get('tracking_id');
 ```
 
-
-> Attention: The cache is only available for global settings and is not available for scopes. You must take care of this yourself.
-
 ### Translation
 
 I suggest using the built-in laravel methods to translate any keys, names and descriptions. You can use this approach for most laravel packages, there is no need to store translations within different database tables when you can do this in one place.
