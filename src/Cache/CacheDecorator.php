@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Rudnev\Settings\Cache;
 
+use Rudnev\Settings\Scopes\Scope;
+use Rudnev\Settings\Contracts\StoreContract;
 use Rudnev\Settings\Cache\L1\FirstLevelCache;
 use Rudnev\Settings\Cache\L2\SecondLevelCache;
-use Rudnev\Settings\Contracts\StoreContract;
-use Rudnev\Settings\Scopes\Scope;
 
 class CacheDecorator implements StoreContract
 {

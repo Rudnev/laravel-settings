@@ -4,8 +4,8 @@ namespace Rudnev\Settings\Tests\Unit\Cache\L1;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Rudnev\Settings\Cache\L1\FirstLevelRegion;
 use Rudnev\Settings\Cache\L1\FirstLevelCache;
+use Rudnev\Settings\Cache\L1\FirstLevelRegion;
 
 class FirstLevelCacheTest extends TestCase
 {

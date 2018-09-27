@@ -6,7 +6,9 @@ namespace Rudnev\Settings;
 
 use ArrayAccess;
 use Illuminate\Support\Arr;
+use Rudnev\Settings\Scopes\Scope;
 use Rudnev\Settings\Events\StoreEvent;
+use Rudnev\Settings\Scopes\EntityScope;
 use Illuminate\Support\Traits\Macroable;
 use Rudnev\Settings\Events\PropertyMissed;
 use Rudnev\Settings\Events\PropertyRemoved;
@@ -17,8 +19,6 @@ use Rudnev\Settings\Events\AllSettingsRemoved;
 use Rudnev\Settings\Events\AllSettingsReceived;
 use Rudnev\Settings\Contracts\RepositoryContract;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
-use Rudnev\Settings\Scopes\EntityScope;
-use Rudnev\Settings\Scopes\Scope;
 
 /**
  * @mixin \Rudnev\Settings\Contracts\StoreContract

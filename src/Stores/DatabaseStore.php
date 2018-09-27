@@ -3,10 +3,10 @@
 namespace Rudnev\Settings\Stores;
 
 use Illuminate\Support\Arr;
+use Rudnev\Settings\Scopes\Scope;
+use Rudnev\Settings\Scopes\EntityScope;
 use Illuminate\Database\ConnectionInterface;
 use Rudnev\Settings\Contracts\StoreContract;
-use Rudnev\Settings\Scopes\EntityScope;
-use Rudnev\Settings\Scopes\Scope;
 
 class DatabaseStore implements StoreContract
 {
