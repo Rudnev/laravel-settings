@@ -138,7 +138,11 @@ class SecondLevelRegion
         if ($this->has($key)) {
             return $this->store->get($this->getCacheEntryKey($key));
         } elseif ($callback) {
-            $this->put($key, $value = $callback($key));
+            $value = $callback($key);
+
+            if (! is_null($value)) {
+                $this->put($key, $value);
+            }
         }
 
         return $value ?? null;
@@ -177,7 +181,12 @@ class SecondLevelRegion
         }
 
         if ($callback && $notFound = array_keys($return, null, true)) {
-            $this->putMultiple($values = $callback($notFound));
+            $values = array_filter($callback($notFound), function ($value) {
+                return ! is_null($value);
+            });
+
+            $this->putMultiple($values);
+
             $return = array_merge($return, $values);
         }
 

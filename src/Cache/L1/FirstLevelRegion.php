@@ -85,7 +85,11 @@ class FirstLevelRegion
         if ($this->has($key)) {
             return Arr::get($this->data, $key);
         } elseif ($callback) {
-            $this->put($key, $value = $callback($key));
+            $value = $callback($key);
+
+            if (! is_null($value)) {
+                $this->put($key, $value);
+            }
         }
 
         return $value ?? null;
@@ -115,7 +119,12 @@ class FirstLevelRegion
         }
 
         if ($callback && ! empty($notFound)) {
-            $this->putMultiple($notFound = $callback($notFound));
+            $notFound = array_filter($callback($notFound), function ($value) {
+                return ! is_null($value);
+            });
+
+            $this->putMultiple($notFound);
+
             $result = array_merge($result, $notFound);
         }
 
