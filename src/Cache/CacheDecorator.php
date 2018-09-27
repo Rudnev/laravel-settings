@@ -183,7 +183,9 @@ class CacheDecorator implements StoreContract
         $region = $this->getScope()->hash;
 
         return $this->firstLevelCache->region($region)->get($key, function ($key) use ($region) {
-            return $this->secondLevelCache->region($region)->get($key) ?? $this->store->get($key);
+            return $this->secondLevelCache->region($region)->get($key, function ($key) {
+                return $this->store->get($key);
+            });
         });
     }
 
@@ -200,9 +202,9 @@ class CacheDecorator implements StoreContract
         $region = $this->getScope()->hash;
 
         return $this->firstLevelCache->region($region)->getMultiple($keys, function ($keys) use ($region) {
-            $result = $this->secondLevelCache->region($region)->getMultiple($keys);
-
-            return array_search(null, $result, true) === false ? $result : $this->store->getMultiple($keys);
+            return $this->secondLevelCache->region($region)->getMultiple($keys, function ($keys) {
+                return $this->store->getMultiple($keys);
+            });
         });
     }
 
