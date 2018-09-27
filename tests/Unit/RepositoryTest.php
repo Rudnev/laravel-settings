@@ -4,7 +4,6 @@ namespace Rudnev\Settings\Tests\Unit;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Rudnev\Settings\Scopes\Scope;
 use Rudnev\Settings\Stores\ArrayStore;
 
 class RepositoryTest extends TestCase

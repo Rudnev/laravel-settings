@@ -46,7 +46,7 @@ class SettingsManager implements FactoryContract
     /**
      * Create a new manager instance.
      *
-     * @param  \Illuminate\Foundation\Application $app
+     * @param \Illuminate\Foundation\Application $app
      * @return void
      */
     public function __construct($app)
@@ -57,12 +57,12 @@ class SettingsManager implements FactoryContract
     /**
      * Get a repository instance.
      *
-     * @param  string $name
+     * @param string $name
      * @return mixed
      *
      * @throws \InvalidArgumentException
      */
-    public function store($name = null)
+    public function store(string $name = null)
     {
         $name = $name ?: $this->getDefaultStore();
 

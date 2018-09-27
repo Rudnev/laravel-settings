@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rudnev\Settings\Events;
 
 class PropertyWritten extends StoreEvent
@@ -24,7 +26,7 @@ class PropertyWritten extends StoreEvent
      * @param string $key
      * @param mixed $value
      */
-    public function __construct($key, $value)
+    public function __construct(string $key, $value)
     {
         $this->key = $key;
         $this->value = $value;

@@ -13,15 +13,15 @@ interface StoreContract
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Set the settings store name.
      *
-     * @param $name
+     * @param string $name
      * @return void
      */
-    public function setName($name);
+    public function setName(string $name): void;
 
     /**
      * Get the scope.
@@ -33,43 +33,43 @@ interface StoreContract
     /**
      * Set the scope.
      *
-     * @param mixed $scope
+     * @param \Rudnev\Settings\Scopes\Scope $scope
      * @return void
      */
-    public function setScope(Scope $scope);
+    public function setScope(Scope $scope): void;
 
     /**
      * Determine if an item exists in the settings store.
      *
-     * @param  string $key
+     * @param string $key
      * @return bool
      */
-    public function has($key);
+    public function has(string $key): bool;
 
     /**
      * Retrieve an item from the settings store by key.
      *
-     * @param  string $key
+     * @param string $key
      * @return mixed
      */
-    public function get($key);
+    public function get(string $key);
 
     /**
      * Retrieve multiple items from the settings store by key.
      *
      * Items not found in the settings store will have a null value.
      *
-     * @param  iterable $keys
+     * @param iterable $keys
      * @return array
      */
-    public function getMultiple(iterable $keys);
+    public function getMultiple(iterable $keys): array;
 
     /**
      * Get all of the settings items.
      *
      * @return array
      */
-    public function all();
+    public function all(): array;
 
     /**
      * Store an item in the settings store.
@@ -78,7 +78,7 @@ interface StoreContract
      * @param  mixed $value
      * @return void
      */
-    public function set($key, $value);
+    public function set(string $key, $value): void;
 
     /**
      * Store multiple items in the settings store.
@@ -86,7 +86,7 @@ interface StoreContract
      * @param  iterable $values
      * @return void
      */
-    public function setMultiple(iterable $values);
+    public function setMultiple(iterable $values): void;
 
     /**
      * Remove an item from the settings store.
@@ -94,7 +94,7 @@ interface StoreContract
      * @param  string $key
      * @return bool
      */
-    public function forget($key);
+    public function forget(string $key): bool;
 
     /**
      * Remove multiple items from the settings store.
@@ -102,14 +102,14 @@ interface StoreContract
      * @param  iterable $keys
      * @return bool
      */
-    public function forgetMultiple(iterable $keys);
+    public function forgetMultiple(iterable $keys): bool;
 
     /**
      * Remove all items from the settings store.
      *
      * @return bool
      */
-    public function flush();
+    public function flush(): bool;
 
     /**
      * Set the scope.

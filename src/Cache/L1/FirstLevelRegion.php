@@ -68,7 +68,7 @@ class FirstLevelRegion
      * @param string $key
      * @return bool
      */
-    public function has($key): bool
+    public function has(string $key): bool
     {
         return Arr::has($this->data, $key);
     }
@@ -80,7 +80,7 @@ class FirstLevelRegion
      * @param \Closure|null $callback
      * @return mixed
      */
-    public function get($key, Closure $callback = null)
+    public function get(string $key, Closure $callback = null)
     {
         if ($this->has($key)) {
             return Arr::get($this->data, $key);
@@ -150,7 +150,7 @@ class FirstLevelRegion
      * @param mixed $value
      * @return void
      */
-    public function put($key, $value): void
+    public function put(string $key, $value): void
     {
         Arr::set($this->data, $key, $value);
     }
@@ -174,7 +174,7 @@ class FirstLevelRegion
      * @param  string $key
      * @return void
      */
-    public function forget($key): void
+    public function forget(string $key): void
     {
         Arr::forget($this->data, $key);
     }

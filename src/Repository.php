@@ -200,7 +200,7 @@ class Repository implements ArrayAccess, RepositoryContract
      * @param string $key
      * @return bool
      */
-    public function has($key): bool
+    public function has(string $key): bool
     {
         return $this->store->has($key);
     }

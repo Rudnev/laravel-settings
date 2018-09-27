@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rudnev\Settings\Contracts;
 
 interface FactoryContract
@@ -10,5 +12,5 @@ interface FactoryContract
      * @param  string|null $name
      * @return \Rudnev\Settings\Contracts\RepositoryContract
      */
-    public function store($name = null);
+    public function store(string $name = null);
 }

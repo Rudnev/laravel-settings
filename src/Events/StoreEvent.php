@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rudnev\Settings\Events;
 
 use Rudnev\Settings\Scopes\Scope;
@@ -25,7 +27,7 @@ class StoreEvent
      *
      * @return string
      */
-    public function getStoreName()
+    public function getStoreName(): string
     {
         return $this->storeName;
     }
@@ -35,7 +37,7 @@ class StoreEvent
      *
      * @param string $storeName
      */
-    public function setStoreName($storeName)
+    public function setStoreName(string $storeName)
     {
         $this->storeName = $storeName;
     }
@@ -45,7 +47,7 @@ class StoreEvent
      *
      * @return \Rudnev\Settings\Scopes\Scope
      */
-    public function getScope()
+    public function getScope(): Scope
     {
         return $this->scope;
     }

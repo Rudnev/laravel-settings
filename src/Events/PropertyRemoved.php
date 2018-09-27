@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rudnev\Settings\Events;
 
 class PropertyRemoved extends StoreEvent
@@ -16,7 +18,7 @@ class PropertyRemoved extends StoreEvent
      *
      * @param string $key
      */
-    public function __construct($key)
+    public function __construct(string $key)
     {
         $this->key = $key;
     }

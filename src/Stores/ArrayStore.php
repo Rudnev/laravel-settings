@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rudnev\Settings\Stores;
 
 use Illuminate\Support\Arr;
@@ -13,7 +15,7 @@ class ArrayStore implements StoreContract
      *
      * @var string
      */
-    protected $name;
+    protected $name = 'array';
 
     /**
      * The scope.
@@ -40,17 +42,22 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * Get the settings store name.
+     *
+     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * {@inheritdoc}
+     * Set the settings store name.
+     *
+     * @param string $name
+     * @return void
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -68,7 +75,7 @@ class ArrayStore implements StoreContract
     /**
      * Set the scope.
      *
-     * @param mixed $scope
+     * @param \Rudnev\Settings\Scopes\Scope $scope
      * @return void
      */
     public function setScope(Scope $scope): void
@@ -77,25 +84,36 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * Determine if an item exists in the settings store.
+     *
+     * @param string $key
+     * @return bool
      */
-    public function has($key)
+    public function has(string $key): bool
     {
         return ! is_null(Arr::get($this->storage, $key));
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieve an item from the settings store by key.
+     *
+     * @param string $key
+     * @return mixed
      */
-    public function get($key)
+    public function get(string $key)
     {
         return Arr::get($this->storage, $key);
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieve multiple items from the settings store by key.
+     *
+     * Items not found in the settings store will have a null value.
+     *
+     * @param iterable $keys
+     * @return array
      */
-    public function getMultiple(iterable $keys)
+    public function getMultiple(iterable $keys): array
     {
         $return = [];
 
@@ -107,25 +125,34 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * Get all of the settings items.
+     *
+     * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->storage;
     }
 
     /**
-     * {@inheritdoc}
+     * Store an item in the settings store.
+     *
+     * @param  string $key
+     * @param  mixed $value
+     * @return void
      */
-    public function set($key, $value)
+    public function set(string $key, $value): void
     {
         Arr::set($this->storage, $key, $value);
     }
 
     /**
-     * {@inheritdoc}
+     * Store multiple items in the settings store.
+     *
+     * @param  iterable $values
+     * @return void
      */
-    public function setMultiple(iterable $values)
+    public function setMultiple(iterable $values): void
     {
         foreach ($values as $key => $value) {
             $this->set($key, $value);
@@ -133,9 +160,12 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * Remove an item from the settings store.
+     *
+     * @param  string $key
+     * @return bool
      */
-    public function forget($key)
+    public function forget(string $key): bool
     {
         Arr::forget($this->storage, $key);
 
@@ -143,9 +173,12 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * Remove multiple items from the settings store.
+     *
+     * @param  iterable $keys
+     * @return bool
      */
-    public function forgetMultiple(iterable $keys)
+    public function forgetMultiple(iterable $keys): bool
     {
         foreach ($keys as $key) {
             $this->forget($key);
@@ -155,9 +188,11 @@ class ArrayStore implements StoreContract
     }
 
     /**
-     * {@inheritdoc}
+     * Remove all items from the settings store.
+     *
+     * @return bool
      */
-    public function flush()
+    public function flush(): bool
     {
         $this->storage = [];
 

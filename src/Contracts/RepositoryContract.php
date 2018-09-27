@@ -10,7 +10,7 @@ interface RepositoryContract
      * @param  string $key
      * @return bool
      */
-    public function has($key);
+    public function has(string $key): bool;
 
     /**
      * Retrieve an item from the settings store by key.
@@ -26,7 +26,7 @@ interface RepositoryContract
      *
      * @return array
      */
-    public function all();
+    public function all(): array;
 
     /**
      * Store an item in the settings store.
@@ -43,14 +43,14 @@ interface RepositoryContract
      * @param  string|iterable $key
      * @return bool
      */
-    public function forget($key);
+    public function forget($key): bool;
 
     /**
      * Remove all items from the settings store.
      *
      * @return bool
      */
-    public function flush();
+    public function flush(): bool;
 
     /**
      * Set the scope.

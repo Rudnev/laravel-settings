@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rudnev\Settings\Structures;
 
 use ArrayObject;
@@ -17,9 +19,9 @@ class Container extends ArrayObject
      * Get the default value.
      *
      * @param string $key
-     * @return array
+     * @return mixed
      */
-    public function getDefault($key = null)
+    public function getDefault(string $key = null)
     {
         if (isset($key)) {
             return value(array_get($this->default, $key));
@@ -35,7 +37,7 @@ class Container extends ArrayObject
      * @param mixed $value
      * @return void
      */
-    public function setDefault($key, $value = null)
+    public function setDefault($key, $value = null): void
     {
         if (is_array($key)) {
             $this->default = array_merge($this->default, $key);
@@ -50,7 +52,7 @@ class Container extends ArrayObject
      * @param array|string $key
      * @return void
      */
-    public function forgetDefault($key = null)
+    public function forgetDefault($key = null): void
     {
         if (is_null($key)) {
             $this->default = [];
