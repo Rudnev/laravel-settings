@@ -177,9 +177,13 @@ class CacheDecorator implements StoreContract
         $region = $this->getScope()->hash;
 
         return $this->firstLevelCache->region($region)->get($key, function ($key) use ($region) {
-            return $this->secondLevelCache->region($region)->get($key, function ($key) {
+            $root = explode('.', $key)[0];
+
+            $result = $this->secondLevelCache->region($region)->get($root, function ($key) {
                 return $this->store->get($key);
             });
+
+            return array_get([$root => $result], $key);
         });
     }
 
@@ -196,9 +200,24 @@ class CacheDecorator implements StoreContract
         $region = $this->getScope()->hash;
 
         return $this->firstLevelCache->region($region)->getMultiple($keys, function ($keys) use ($region) {
-            return $this->secondLevelCache->region($region)->getMultiple($keys, function ($keys) {
-                return $this->store->getMultiple($keys);
-            });
+            $return = [];
+
+            $roots = array_map(function ($key) {
+                return explode('.', $key)[0];
+            }, $keys);
+
+            $data = $this->secondLevelCache->region($region)->getMultiple($roots);
+
+            foreach ($keys as $key) {
+                $return[$key] = array_get($data, $key);
+            }
+
+            if ($notFound = array_keys($return, null, true)) {
+                $notFound = $this->store->getMultiple($notFound);
+                $return = array_merge($return, $notFound);
+            }
+
+            return $return;
         });
     }
 
@@ -232,7 +251,12 @@ class CacheDecorator implements StoreContract
         $region = $this->getScope()->hash;
 
         $this->firstLevelCache->region($region)->put($key, $value);
-        $this->secondLevelCache->region($region)->put($key, $value);
+
+        $root = explode('.', $key)[0];
+        $data = [$root => $this->secondLevelCache->region($region)->get($root)];
+        array_set($data, $key, $value);
+
+        $this->secondLevelCache->region($region)->put($root, $data[$root]);
     }
 
     /**
@@ -249,7 +273,18 @@ class CacheDecorator implements StoreContract
         $region = $this->getScope()->hash;
 
         $this->firstLevelCache->region($region)->putMultiple($values);
-        $this->secondLevelCache->region($region)->putMultiple($values);
+
+        $keys = array_map(function ($key) {
+            return explode('.', $key)[0];
+        }, array_keys($values));
+
+        $data = $this->secondLevelCache->region($region)->getMultiple($keys);
+
+        foreach ($values as $key => $value) {
+            array_set($data, $key, $value);
+        }
+
+        $this->secondLevelCache->region($region)->putMultiple($data);
     }
 
     /**
@@ -264,7 +299,7 @@ class CacheDecorator implements StoreContract
 
         if ($result) {
             $this->firstLevelCache->region($this->getScope()->hash)->forget($key);
-            $this->secondLevelCache->region($this->getScope()->hash)->flush();
+            $this->secondLevelCache->region($this->getScope()->hash)->forget(explode('.', $key)[0]);
         }
 
         return $result;
@@ -282,7 +317,12 @@ class CacheDecorator implements StoreContract
 
         if ($result) {
             $this->firstLevelCache->region($this->getScope()->hash)->forgetMultiple($keys);
-            $this->secondLevelCache->region($this->getScope()->hash)->flush();
+
+            array_walk($keys, function (&$key) {
+                $key = explode('.', $key)[0];
+            });
+
+            $this->secondLevelCache->region($this->getScope()->hash)->forgetMultiple($keys);
         }
 
         return $result;
