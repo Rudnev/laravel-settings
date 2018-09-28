@@ -31,6 +31,13 @@ class SecondLevelRegion
     protected $lifetime = 0;
 
     /**
+     * The lock operations availability flag.
+     *
+     * @var bool
+     */
+    protected $lockAvailable;
+
+    /**
      * The version list.
      *
      * @var int[]
@@ -291,6 +298,45 @@ class SecondLevelRegion
     public function flush(): void
     {
         $this->incrementVersion();
+    }
+
+    /**
+     * Attempt to acquire the lock.
+     *
+     * @param string $key
+     * @param Closure $callback
+     * @param int $lifetime
+     * @param int $timeout
+     * @return void
+     */
+    public function lock(string $key, Closure $callback, int $lifetime = 60, int $timeout = 60): void
+    {
+        if ($this->isLockAvailable()) {
+            $this->store->lock($this->getLockName($key), $lifetime)->block($timeout, $callback);
+        } else {
+            $callback();
+        }
+    }
+
+    /**
+     * Determine if atomic locking operations are available.
+     *
+     * @return bool
+     */
+    public function isLockAvailable(): bool
+    {
+        return $this->lockAvailable ?? $this->lockAvailable = method_exists($this->store->getStore(), 'lock');
+    }
+
+    /**
+     * Get the name of lock.
+     *
+     * @param string $key
+     * @return string
+     */
+    protected function getLockName(string $key): string
+    {
+        return '[locks].'.$this->getCacheEntryKey($key);
     }
 
     /**

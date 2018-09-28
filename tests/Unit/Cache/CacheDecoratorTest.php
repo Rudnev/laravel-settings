@@ -154,7 +154,7 @@ class CacheDecoratorTest extends TestCase
         };
 
         $l1Mock->shouldReceive('region')->times(1)->andReturnUsing($l1Region);
-        $l2Mock->shouldReceive('region')->times(2)->andReturnUsing($l2Region);
+        $l2Mock->shouldReceive('region')->times(1)->andReturnUsing($l2Region);
         $storeMock->shouldReceive('set')->times(1)->andReturnUsing($storeSet);
         $decorator->set('foo', 'bar');
 
@@ -195,7 +195,7 @@ class CacheDecoratorTest extends TestCase
         };
 
         $l1Mock->shouldReceive('region')->times(1)->andReturnUsing($l1Region);
-        $l2Mock->shouldReceive('region')->times(2)->andReturnUsing($l2Region);
+        $l2Mock->shouldReceive('region')->times(1)->andReturnUsing($l2Region);
         $storeMock->shouldReceive('setMultiple')->times(1)->andReturnUsing($storeSetMultiple);
         $decorator->setMultiple(['foo' => 123, 'bar' => 321, 'baz' => 132]);
 
