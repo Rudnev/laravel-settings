@@ -2,8 +2,8 @@
 
 namespace Rudnev\Settings\Tests\Unit\Cache\L2;
 
-use Illuminate\Cache\Lock;
 use Mockery as m;
+use Illuminate\Cache\Lock;
 use PHPUnit\Framework\TestCase;
 use Rudnev\Settings\Cache\L2\SecondLevelRegion;
 
@@ -159,8 +159,7 @@ class SecondLevelRegionTest extends TestCase
         $this->assertTrue($called);
 
         $region = new SecondLevelRegion('foo', $repo);
-        $repo->shouldReceive('getStore')->once()->andReturn(new class
-        {
+        $repo->shouldReceive('getStore')->once()->andReturn(new class {
             protected function lock()
             {
             }
