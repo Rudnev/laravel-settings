@@ -250,18 +250,7 @@ class CacheDecorator implements StoreContract
         $regionName = $this->getScope()->hash;
 
         $this->firstLevelCache->region($regionName)->put($key, $value);
-
-        $region = $this->secondLevelCache->region($regionName);
-
-        $root = $this->getKeyRoot($key);
-
-        $region->lock($root, function () use (&$region, &$root, &$key, &$value) {
-            $data = [$root => $region->get($root)];
-
-            Arr::set($data, $key, $value);
-
-            $region->put($root, $data[$root]);
-        });
+        $this->secondLevelCache->region($regionName)->forget($this->getKeyRoot($key));
     }
 
     /**
@@ -277,20 +266,7 @@ class CacheDecorator implements StoreContract
         $regionName = $this->getScope()->hash;
 
         $this->firstLevelCache->region($regionName)->putMultiple($values);
-
-        $region = $this->secondLevelCache->region($regionName);
-
-        foreach ($values as $key => $value) {
-            $root = $this->getKeyRoot($key);
-
-            $region->lock($root, function () use (&$region, &$root, &$key, &$value) {
-                $data = [$root => $region->get($root)];
-
-                Arr::set($data, $key, $value);
-
-                $region->put($root, $data[$root]);
-            });
-        }
+        $this->secondLevelCache->region($regionName)->forgetMultiple($this->getKeyRoot(array_keys($values)));
     }
 
     /**
