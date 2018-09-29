@@ -84,12 +84,10 @@ class FirstLevelRegion
     {
         if ($this->has($key)) {
             return Arr::get($this->data, $key);
-        } elseif ($callback) {
-            $value = $callback($key);
+        }
 
-            if (! is_null($value)) {
-                $this->put($key, $value);
-            }
+        if ($callback && ! is_null($value = $callback($key))) {
+            $this->put($key, $value);
         }
 
         return $value ?? null;
