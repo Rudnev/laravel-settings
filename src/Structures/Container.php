@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Rudnev\Settings\Structures;
 
-use ArrayObject;
 use TypeError;
+use ArrayObject;
 
 class Container extends ArrayObject
 {
