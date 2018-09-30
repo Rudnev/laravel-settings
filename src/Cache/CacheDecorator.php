@@ -206,7 +206,7 @@ class CacheDecorator implements StoreContract
                 return $this->store->get($key);
             });
 
-            if (! $firstLevel->has($root)) {
+            if (! is_null($result) && ! $firstLevel->has($root)) {
                 $firstLevel->put($root, $result);
             }
 
@@ -234,7 +234,7 @@ class CacheDecorator implements StoreContract
             $data = $this->getSecondLevelRegion()->getMultiple($roots);
 
             foreach ($data as $root => $value) {
-                if (! $firstLevel->has($root)) {
+                if (! is_null($value) && ! $firstLevel->has($root)) {
                     $firstLevel->put($root, $value);
                 }
             }

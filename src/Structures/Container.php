@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rudnev\Settings\Structures;
 
 use ArrayObject;
+use TypeError;
 
 class Container extends ArrayObject
 {
@@ -79,6 +80,35 @@ class Container extends ArrayObject
      */
     public function offsetGet($key)
     {
+        $this->checkKeyType($key);
+
         return $this->offsetExists($key) ? parent::offsetGet($key) : $this->getDefault($key);
+    }
+
+    /**
+     * Store an item.
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet($key, $value)
+    {
+        $this->checkKeyType($key);
+
+        parent::offsetSet($key, $value);
+    }
+
+    /**
+     * Check the type of key.
+     *
+     * @param mixed $key
+     * @return void
+     */
+    protected function checkKeyType(&$key)
+    {
+        if (! is_string($key)) {
+            throw new TypeError('Key must be of the type string, '.gettype($key).' given.');
+        }
     }
 }
