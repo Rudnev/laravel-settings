@@ -9,7 +9,7 @@ use Rudnev\Settings\Cache\L1\FirstLevelRegion;
 
 class FirstLevelCacheTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

@@ -10,7 +10,7 @@ use Rudnev\Settings\Stores\DatabaseStore;
 
 class DatabaseStoreTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

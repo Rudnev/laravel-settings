@@ -16,7 +16,7 @@ use Rudnev\Settings\Events\AllSettingsReceived;
 
 class EventsTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

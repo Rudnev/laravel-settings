@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 class HasSettingsTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

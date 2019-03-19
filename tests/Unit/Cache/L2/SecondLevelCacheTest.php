@@ -9,12 +9,12 @@ use Rudnev\Settings\Cache\L2\SecondLevelRegion;
 
 class SecondLevelCacheTest extends TestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         SecondLevelCache::reset();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

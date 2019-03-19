@@ -18,7 +18,7 @@ use Rudnev\Settings\Contracts\RepositoryContract;
 
 class SettingsManagerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

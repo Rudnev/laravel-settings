@@ -15,13 +15,13 @@ use Rudnev\Settings\Cache\L2\SecondLevelRegion;
 
 class CacheDecoratorTest extends TestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         SecondLevelCache::reset();
         SecondLevelRegion::reset();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }
