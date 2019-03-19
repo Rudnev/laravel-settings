@@ -46,7 +46,7 @@ class SecondLevelCacheTest extends TestCase
         $store = m::spy('\Illuminate\Contracts\Cache\Repository');
 
         $cache = new SecondLevelCache($store);
-        $this->assertEquals(120, $cache->getDefaultLifetime());
+        $this->assertEquals(7200, $cache->getDefaultLifetime());
 
         $cache->setDefaultLifetime(300);
         $this->assertEquals(300, $cache->getDefaultLifetime());
@@ -61,7 +61,7 @@ class SecondLevelCacheTest extends TestCase
         $this->assertInstanceOf(SecondLevelRegion::class, $region);
         $this->assertEquals('laravel_settings[0].foo', $region->getName());
         $this->assertEquals(spl_object_id($store), spl_object_id($region->getStore()));
-        $this->assertEquals(120, $region->getLifetime());
+        $this->assertEquals(7200, $region->getLifetime());
         $this->assertEquals(spl_object_id($region), spl_object_id($cache->region('foo')));
     }
 

@@ -23,11 +23,11 @@ class SecondLevelCache
     protected $prefix = 'laravel_settings';
 
     /**
-     * The default lifetime in minutes.
+     * The default lifetime.
      *
      * @var int
      */
-    protected $defaultLifetime = 120;
+    protected $defaultLifetime = 7200;
 
     /**
      * The array of created regions.
@@ -95,7 +95,7 @@ class SecondLevelCache
     }
 
     /**
-     * Get the default lifetime in minutes.
+     * Get the default lifetime.
      *
      * @return int
      */
@@ -105,13 +105,13 @@ class SecondLevelCache
     }
 
     /**
-     * Set the default lifetime in minutes.
+     * Set the default lifetime.
      *
-     * @param int $minutes
+     * @param int $lifetime
      */
-    public function setDefaultLifetime(int $minutes): void
+    public function setDefaultLifetime(int $lifetime): void
     {
-        $this->defaultLifetime = $minutes;
+        $this->defaultLifetime = $lifetime;
     }
 
     /**

@@ -11,7 +11,7 @@ use Rudnev\Settings\Contracts\RepositoryContract;
 
 class ServiceProviderTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

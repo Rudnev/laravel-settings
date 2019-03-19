@@ -2,6 +2,7 @@
 
 namespace Rudnev\Settings\Traits;
 
+use Illuminate\Support\Arr;
 use Rudnev\Settings\Structures\Container;
 
 trait HasSettings
@@ -40,8 +41,8 @@ trait HasSettings
                 return;
             }
 
-            $old = array_dot((array) $model->settingsOriginal);
-            $new = array_dot((array) $model->settingsAttribute);
+            $old = Arr::dot((array) $model->settingsOriginal);
+            $new = Arr::dot((array) $model->settingsAttribute);
 
             // removing settings
             if (! empty($old)) {

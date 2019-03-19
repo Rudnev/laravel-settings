@@ -9,7 +9,7 @@ use Rudnev\Settings\Tests\Integration\TestCase;
 
 class ClearCacheTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -18,7 +18,7 @@ class ClearCacheTest extends TestCase
         });
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
 

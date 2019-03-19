@@ -116,6 +116,22 @@ class SettingsManagerTest extends TestCase
         $this->assertNull($store->getSecondLevelCache()->region('default')->get('bar'));
     }
 
+    public function testCacheCompatibility()
+    {
+        $app = $this->getApp($this->getConfig());
+
+        $app->shouldReceive('version')->once()->andReturn('5.8.5');
+        $manager = new SettingsManager($app);
+        $store = $manager->store('bar')->getStore();
+        $this->assertEquals(60, $store->getSecondLevelCache()->getDefaultLifetime());
+
+        $app->shouldReceive('version')->once()->andReturn('5.7.0');
+        $manager = new SettingsManager($app);
+        $store = $manager->store('bar')->getStore();
+        $this->assertEquals(1, $store->getSecondLevelCache()->getDefaultLifetime());
+
+    }
+
     public function testPreloadScopes()
     {
         $app = $this->getApp($this->getConfig());

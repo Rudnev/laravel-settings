@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 class HasSettingsTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -28,7 +28,7 @@ class HasSettingsTest extends TestCase
         ]);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         m::close();
 
