@@ -129,7 +129,6 @@ class SettingsManagerTest extends TestCase
         $manager = new SettingsManager($app);
         $store = $manager->store('bar')->getStore();
         $this->assertEquals(1, $store->getSecondLevelCache()->getDefaultLifetime());
-
     }
 
     public function testPreloadScopes()
