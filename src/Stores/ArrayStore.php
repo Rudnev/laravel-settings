@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Rudnev\Settings\Stores;
 
 use Illuminate\Support\Arr;
-use Rudnev\Settings\Scopes\Scope;
 use Rudnev\Settings\Contracts\StoreContract;
+use Rudnev\Settings\Scopes\Scope;
 
 class ArrayStore implements StoreContract
 {
