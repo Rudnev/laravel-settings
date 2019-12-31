@@ -2,7 +2,6 @@
 
 namespace Rudnev\Settings\Traits;
 
-use Illuminate\Support\Arr;
 use Rudnev\Settings\Structures\Container;
 
 trait HasSettings
@@ -10,21 +9,14 @@ trait HasSettings
     /**
      * The settings repository instance.
      *
-     * @var \Rudnev\Settings\Contracts\RepositoryContract
+     * @var \Rudnev\Settings\Contracts\RepositoryContract|null
      */
     protected $settingsRepo;
 
     /**
-     * The original state of the settings.
-     *
-     * @var array
-     */
-    protected $settingsOriginal;
-
-    /**
      * The state of the settings.
      *
-     * @var array
+     * @var \Rudnev\Settings\Structures\Container|null
      */
     protected $settingsAttribute;
 
@@ -35,57 +27,49 @@ trait HasSettings
      */
     public static function bootHasSettings()
     {
-        static::saved(function ($model) {
+        static::saved(function (self $model) {
             // return if settings are not affected
-            if (is_null($model->settingsOriginal) && is_null($model->settingsAttribute)) {
+            if (is_null($model->settingsAttribute)) {
                 return;
             }
 
-            $old = Arr::dot((array) $model->settingsOriginal);
-            $new = Arr::dot((array) $model->settingsAttribute);
-
             // removing settings
-            if (! empty($old)) {
-                $forget = array_keys(array_diff_key($old, $new));
-                $model->settings()->forget($forget);
+            if (! empty($deleted = $model->settingsAttribute->getDeleted())) {
+                $model->settings()->forget(array_keys($deleted));
             }
 
             // saving settings
-            if (! empty($new)) {
-                $changes = array_diff_assoc($new, $old);
-
-                $model->settings()->set($changes);
+            if (! empty($updated = $model->settingsAttribute->getUpdated())) {
+                $model->settings()->set($updated);
             }
 
-            $model->settingsOriginal = (array) $model->settingsAttribute;
+            $model->settingsAttribute->sync();
         });
 
-        static::deleting(function ($model) {
+        static::deleting(function (self $model) {
             if (method_exists($model, 'isForceDeleting') && ! $model->isForceDeleting()) {
                 return;
             }
 
             $model->settings()->flush();
+
+            if (! is_null($model->settingsAttribute)) {
+                $model->settingsAttribute->setOriginal([]);
+            }
         });
     }
 
     /**
      * Get the settings attribute.
      *
-     * @return array
+     * @return \Rudnev\Settings\Structures\Container
      */
     public function getSettingsAttribute()
     {
-        if ($this->exists && is_null($this->settingsOriginal)) {
-            $this->settingsOriginal = $this->settings()->all();
-
-            if (is_null($this->settingsAttribute)) {
-                $this->setSettingsAttribute($this->settingsOriginal);
-            }
-        }
-
         if (is_null($this->settingsAttribute)) {
-            $this->setSettingsAttribute([]);
+            $this->settingsAttribute = new Container($this->exists ? $this->settings()->all() : []);
+
+            $this->settingsAttribute->setDefault($this->settingsConfig['default'] ?? []);
         }
 
         return $this->settingsAttribute;
@@ -94,25 +78,24 @@ trait HasSettings
     /**
      * Set the settings attribute.
      *
-     * @param $value
+     * @param array|null $value
      */
     public function setSettingsAttribute($value)
     {
-        if ($this->exists && is_null($this->settingsOriginal)) {
-            $this->settingsOriginal = $this->settings()->all();
-        }
-
         if (is_null($value)) {
-            $this->settingsAttribute = $value;
+            $this->settingsAttribute = null;
         } else {
-            $this->settingsAttribute = new Container($value);
-            $this->settingsAttribute->setDefault($this->settingsConfig['default'] ?? []);
+            $this->getSettingsAttribute()->substitute($value);
         }
     }
 
     /**
-     * @param null $key
-     * @param null $default
+     * Get / set the specified value of the settings.
+     *
+     * If an array is passed as the key, we will assume you want to set an array of values.
+     *
+     * @param string|iterable|null $key
+     * @param mixed $default
      * @return mixed|\Rudnev\Settings\Contracts\RepositoryContract
      */
     public function settings($key = null, $default = null)

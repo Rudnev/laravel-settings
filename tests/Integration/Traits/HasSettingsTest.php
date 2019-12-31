@@ -57,7 +57,6 @@ class HasSettingsTest extends TestCase
         $model = new Model();
         $model->exists = true;
         $this->assertInstanceOf(Container::class, $model->getSettingsAttribute());
-
         $model = new Model();
         $model->exists = true;
         $model->setSettingsAttribute(['foo' => 'bar']);
@@ -68,6 +67,13 @@ class HasSettingsTest extends TestCase
         $this->assertEquals('baz', $model->settings['bar']);
         $model->settings = null;
         $this->assertNull($model->settings['bar']);
+
+        $model = new Model();
+        $model->settings['example.com'] = 'baz';
+        $model->settings['example'] = ['com' => 'qux'];
+        $model->event('saved');
+        $this->assertEquals('qux', $model->settings['example.com']);
+        $this->assertEquals('qux', $model->settings['example']['com']);
     }
 
     public function testEvents()
@@ -86,7 +92,7 @@ class HasSettingsTest extends TestCase
         $model->shouldReceive('settings')->twice()->andReturn($settings);
         $settings->shouldReceive('forget')->once();
         $settings->shouldReceive('set')->once();
-        $model->setSettingsAttribute(['foo' => 'baz']);
+        $model->setSettingsAttribute(['bar' => 'baz']);
         $model->event('saved');
 
         $model->shouldReceive('settings')->once()->andReturn($settings);

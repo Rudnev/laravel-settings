@@ -3,6 +3,7 @@
 namespace Rudnev\Settings\Tests\Unit\Cache;
 
 use Mockery as m;
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\TestCase;
 use Rudnev\Settings\Scopes\Scope;
 use Rudnev\Settings\Stores\ArrayStore;
@@ -308,7 +309,7 @@ class CacheDecoratorTest extends TestCase
         });
 
         $store->shouldReceive('getMultiple')->andReturnUsing(function ($keys) use (&$data) {
-            return array_only($data, $keys);
+            return Arr::only($data, $keys);
         });
 
         $store->shouldReceive('put')->andReturnUsing(function ($key, $value) use (&$data) {

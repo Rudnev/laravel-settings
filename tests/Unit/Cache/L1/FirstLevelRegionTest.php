@@ -3,6 +3,7 @@
 namespace Rudnev\Settings\Tests\Unit\Cache\L1;
 
 use Mockery as m;
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\TestCase;
 use Rudnev\Settings\Cache\L1\FirstLevelRegion;
 
@@ -62,7 +63,7 @@ class FirstLevelRegionTest extends TestCase
                 'baz' => 132,
             ];
 
-            return array_only($data, $keys);
+            return Arr::only($data, $keys);
         }));
         $this->assertEquals(['foo' => 123, 'bar' => 321, 'baz' => 132], $region->getMultiple(['foo', 'bar', 'baz']));
     }

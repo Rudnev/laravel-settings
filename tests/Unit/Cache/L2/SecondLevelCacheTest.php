@@ -3,6 +3,7 @@
 namespace Rudnev\Settings\Tests\Unit\Cache\L2;
 
 use Mockery as m;
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\TestCase;
 use Rudnev\Settings\Cache\L2\SecondLevelCache;
 use Rudnev\Settings\Cache\L2\SecondLevelRegion;
@@ -92,7 +93,7 @@ class SecondLevelCacheTest extends TestCase
         });
 
         $store->shouldReceive('getMultiple')->andReturnUsing(function ($keys) use (&$data) {
-            return array_only($data, $keys);
+            return Arr::only($data, $keys);
         });
 
         $store->shouldReceive('put')->andReturnUsing(function ($key, $value) use (&$data) {

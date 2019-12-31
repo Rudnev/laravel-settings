@@ -3,6 +3,7 @@
 namespace Rudnev\Settings\Tests\Unit\Cache\L2;
 
 use Mockery as m;
+use Illuminate\Support\Arr;
 use Illuminate\Cache\Lock;
 use PHPUnit\Framework\TestCase;
 use Rudnev\Settings\Cache\L2\SecondLevelRegion;
@@ -103,7 +104,7 @@ class SecondLevelRegionTest extends TestCase
                 'baz' => 132,
             ];
 
-            return array_only($data, $keys);
+            return Arr::only($data, $keys);
         }));
         $this->assertEquals(['foo' => 123, 'bar' => 321, 'baz' => 132], $region->getMultiple(['foo', 'bar', 'baz']));
     }
@@ -186,7 +187,7 @@ class SecondLevelRegionTest extends TestCase
         });
 
         $store->shouldReceive('getMultiple')->andReturnUsing(function ($keys) use (&$data) {
-            return array_only($data, $keys);
+            return Arr::only($data, $keys);
         });
 
         $store->shouldReceive('put')->andReturnUsing(function ($key, $value) use (&$data) {
