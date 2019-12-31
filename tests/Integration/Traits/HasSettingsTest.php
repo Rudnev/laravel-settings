@@ -2,12 +2,12 @@
 
 namespace Rudnev\Settings\Tests\Integration\Traits;
 
-use Mockery as m;
-use Rudnev\Settings\Traits\HasSettings;
-use Rudnev\Settings\Structures\Container;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Rudnev\Settings\Tests\Integration\TestCase;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Mockery as m;
+use Rudnev\Settings\Structures\Container;
+use Rudnev\Settings\Tests\Integration\TestCase;
+use Rudnev\Settings\Traits\HasSettings;
 
 class HasSettingsTest extends TestCase
 {

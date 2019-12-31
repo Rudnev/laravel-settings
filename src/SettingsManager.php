@@ -3,19 +3,19 @@
 namespace Rudnev\Settings;
 
 use Closure;
+use Illuminate\Contracts\Cache\Factory as CacheFactoryContract;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Events\Dispatcher;
-use Rudnev\Settings\Scopes\Scope;
-use Rudnev\Settings\Stores\ArrayStore;
 use Rudnev\Settings\Cache\CacheDecorator;
-use Rudnev\Settings\Stores\DatabaseStore;
-use Rudnev\Settings\Contracts\StoreContract;
 use Rudnev\Settings\Cache\L1\FirstLevelCache;
 use Rudnev\Settings\Cache\L2\SecondLevelCache;
 use Rudnev\Settings\Contracts\FactoryContract;
-use Illuminate\Contracts\Cache\Factory as CacheFactoryContract;
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Rudnev\Settings\Contracts\StoreContract;
+use Rudnev\Settings\Scopes\Scope;
+use Rudnev\Settings\Stores\ArrayStore;
+use Rudnev\Settings\Stores\DatabaseStore;
 
 /**
  * @mixin \Rudnev\Settings\Contracts\RepositoryContract

@@ -4,15 +4,15 @@ namespace Rudnev\Settings\Tests\Unit;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Rudnev\Settings\Events\AllSettingsReceived;
+use Rudnev\Settings\Events\AllSettingsRemoved;
+use Rudnev\Settings\Events\PropertyMissed;
+use Rudnev\Settings\Events\PropertyReceived;
+use Rudnev\Settings\Events\PropertyRemoved;
+use Rudnev\Settings\Events\PropertyWritten;
 use Rudnev\Settings\Repository;
 use Rudnev\Settings\Scopes\Scope;
 use Rudnev\Settings\Stores\ArrayStore;
-use Rudnev\Settings\Events\PropertyMissed;
-use Rudnev\Settings\Events\PropertyRemoved;
-use Rudnev\Settings\Events\PropertyWritten;
-use Rudnev\Settings\Events\PropertyReceived;
-use Rudnev\Settings\Events\AllSettingsRemoved;
-use Rudnev\Settings\Events\AllSettingsReceived;
 
 class EventsTest extends TestCase
 {

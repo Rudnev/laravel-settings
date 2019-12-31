@@ -2,9 +2,9 @@
 
 namespace Rudnev\Settings\Tests\Integration\Commands;
 
+use Illuminate\Support\Facades\Artisan;
 use Mockery as m;
 use Rudnev\Settings\SettingsManager;
-use Illuminate\Support\Facades\Artisan;
 use Rudnev\Settings\Tests\Integration\TestCase;
 
 class ClearCacheTest extends TestCase

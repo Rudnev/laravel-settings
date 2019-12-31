@@ -2,20 +2,20 @@
 
 namespace Rudnev\Settings\Tests\Unit;
 
-use Mockery as m;
+use Illuminate\Config\Repository;
+use Illuminate\Contracts\Cache\Factory;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Config\Repository;
-use Rudnev\Settings\SettingsManager;
-use Rudnev\Settings\Stores\ArrayStore;
-use Illuminate\Contracts\Cache\Factory;
 use Rudnev\Settings\Cache\CacheDecorator;
-use Rudnev\Settings\Stores\DatabaseStore;
-use Illuminate\Contracts\Events\Dispatcher;
 use Rudnev\Settings\Cache\L1\FirstLevelCache;
 use Rudnev\Settings\Cache\L2\SecondLevelCache;
 use Rudnev\Settings\Contracts\RepositoryContract;
+use Rudnev\Settings\SettingsManager;
+use Rudnev\Settings\Stores\ArrayStore;
+use Rudnev\Settings\Stores\DatabaseStore;
 
 class SettingsManagerTest extends TestCase
 {

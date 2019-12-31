@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Rudnev\Settings\Stores;
 
-use Illuminate\Support\Arr;
-use Rudnev\Settings\Scopes\Scope;
-use Rudnev\Settings\Scopes\EntityScope;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Support\Arr;
 use Rudnev\Settings\Contracts\StoreContract;
+use Rudnev\Settings\Scopes\EntityScope;
+use Rudnev\Settings\Scopes\Scope;
 
 class DatabaseStore implements StoreContract
 {
@@ -289,7 +289,7 @@ class DatabaseStore implements StoreContract
      */
     public function set(string $key, $value): void
     {
-        list($key, $value) = $this->prepareIfNested($key, $value);
+        [$key, $value] = $this->prepareIfNested($key, $value);
 
         $value = $this->pack($value);
 
@@ -314,7 +314,7 @@ class DatabaseStore implements StoreContract
     public function setMultiple(iterable $values): void
     {
         foreach ($values as $key => $value) {
-            list($key, $value) = $this->prepareIfNested($key, $value);
+            [$key, $value] = $this->prepareIfNested($key, $value);
             $this->set($key, $value);
         }
     }

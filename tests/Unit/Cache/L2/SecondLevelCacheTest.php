@@ -2,8 +2,8 @@
 
 namespace Rudnev\Settings\Tests\Unit\Cache\L2;
 
-use Mockery as m;
 use Illuminate\Support\Arr;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Rudnev\Settings\Cache\L2\SecondLevelCache;
 use Rudnev\Settings\Cache\L2\SecondLevelRegion;

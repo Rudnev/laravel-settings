@@ -2,17 +2,17 @@
 
 namespace Rudnev\Settings\Tests\Unit\Cache;
 
-use Mockery as m;
-use Illuminate\Support\Arr;
-use PHPUnit\Framework\TestCase;
-use Rudnev\Settings\Scopes\Scope;
-use Rudnev\Settings\Stores\ArrayStore;
-use Rudnev\Settings\Cache\CacheDecorator;
 use Illuminate\Contracts\Cache\Repository;
-use Rudnev\Settings\Contracts\StoreContract;
+use Illuminate\Support\Arr;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Rudnev\Settings\Cache\CacheDecorator;
 use Rudnev\Settings\Cache\L1\FirstLevelCache;
 use Rudnev\Settings\Cache\L2\SecondLevelCache;
 use Rudnev\Settings\Cache\L2\SecondLevelRegion;
+use Rudnev\Settings\Contracts\StoreContract;
+use Rudnev\Settings\Scopes\Scope;
+use Rudnev\Settings\Stores\ArrayStore;
 
 class CacheDecoratorTest extends TestCase
 {
