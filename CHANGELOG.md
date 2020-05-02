@@ -2,8 +2,15 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 1.4.0 - 2020-05-02
+- Added Laravel 7.0 support
+
+## 1.3.0 - 2019-12-31
+- Added Laravel 6.0 support
+- Fixes in the `HasSettings` trait
+
 ## 1.2.0 - 2019-03-20
-- Support Laravel 5.8
+- Added Laravel 5.8 support
 
 ## 1.1.0 - 2018-09-30
 - Caching has been redesigned to cache all scopes, not just the default scope.
