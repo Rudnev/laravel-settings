@@ -165,10 +165,10 @@ Settings::scope($user)->set('lang', 'en');
 Settings::scope($user)->get('lang');
 ```
  
-But instead, it's better to use the `Rudnev\Settings\Trait\HasSettings` trait, for example:
+But instead, it's better to use the `Rudnev\Settings\Traits\HasSettings` trait, for example:
 
 ```php
-use Rudnev\Settings\Trait\HasSettings;
+use Rudnev\Settings\Traits\HasSettings;
 use Illuminate\Database\Eloquent\Model;
 
 class User extends Model 
@@ -207,7 +207,7 @@ $user->settings('lang');
 To set the default settings define `$settingsConfig` property as array with `default` key:
 
 ```php
-use Rudnev\Settings\Trait\HasSettings;
+use Rudnev\Settings\Traits\HasSettings;
 use Illuminate\Database\Eloquent\Model;
 
 class User extends Model 
