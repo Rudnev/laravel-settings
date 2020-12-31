@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 1.5.0 - 2020-12-31
+- Added Laravel 8.0 support
+- Added PHP 8.0 support
+
 ## 1.4.0 - 2020-05-02
 - Added Laravel 7.0 support
 
