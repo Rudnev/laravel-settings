@@ -31,6 +31,6 @@ class ClearCacheTest extends TestCase
 
         $mock->shouldReceive('clearCache');
 
-        Artisan::calSecondLevelRegionl('settings:clear-cache');
+        Artisan::call('settings:clear-cache');
     }
 }
