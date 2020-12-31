@@ -152,8 +152,9 @@ class SecondLevelRegionTest extends TestCase
         $repo = m::spy('\Illuminate\Contracts\Cache\Repository');
 
         $region = new SecondLevelRegion('foo', $repo);
-        $called = false;
+        $repo->shouldReceive('getStore')->once()->andReturn(new class {});
         $repo->shouldNotReceive('lock');
+        $called = false;
         $region->lock('foo', function () use (&$called) {
             $called = true;
         });
