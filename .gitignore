@@ -1,5 +1,6 @@
 .env
 .idea
+.phpunit.result.cache
 .vscode
 composer.lock
 coverage
