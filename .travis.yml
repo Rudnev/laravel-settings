@@ -7,10 +7,11 @@ php:
   - 8.0
 
 env:
+  global:
+    - XDEBUG_MODE=coverage
   matrix:
     - COMPOSER_FLAGS="--prefer-lowest"
     - COMPOSER_FLAGS=""
-
 before_script:
   - travis_retry composer self-update
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-source
