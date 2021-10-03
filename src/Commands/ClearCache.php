@@ -31,7 +31,7 @@ class ClearCache extends Command
     /**
      * Create a new command instance.
      *
-     * @param \Rudnev\Settings\SettingsManager $manager
+     * @param  \Rudnev\Settings\SettingsManager  $manager
      * @return void
      */
     public function __construct(SettingsManager $manager)

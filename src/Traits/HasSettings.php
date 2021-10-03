@@ -78,7 +78,7 @@ trait HasSettings
     /**
      * Set the settings attribute.
      *
-     * @param array|null $value
+     * @param  array|null  $value
      */
     public function setSettingsAttribute($value)
     {
@@ -94,8 +94,8 @@ trait HasSettings
      *
      * If an array is passed as the key, we will assume you want to set an array of values.
      *
-     * @param string|iterable|null $key
-     * @param mixed $default
+     * @param  string|iterable|null  $key
+     * @param  mixed  $default
      * @return mixed|\Rudnev\Settings\Contracts\RepositoryContract
      */
     public function settings($key = null, $default = null)

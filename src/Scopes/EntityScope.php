@@ -23,8 +23,8 @@ class EntityScope extends Scope
     /**
      * EntityScope constructor.
      *
-     * @param string $entityClass
-     * @param string $entityId
+     * @param  string  $entityClass
+     * @param  string  $entityId
      * @return void
      */
     public function __construct(string $entityClass, string $entityId)

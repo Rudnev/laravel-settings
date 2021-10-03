@@ -161,7 +161,8 @@ class SecondLevelRegionTest extends TestCase
         $this->assertTrue($called);
 
         $region = new SecondLevelRegion('foo', $repo);
-        $repo->shouldReceive('getStore')->once()->andReturn(new class {
+        $repo->shouldReceive('getStore')->once()->andReturn(new class
+        {
             protected function lock()
             {
             }

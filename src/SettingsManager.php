@@ -46,7 +46,7 @@ class SettingsManager implements FactoryContract
     /**
      * Create a new manager instance.
      *
-     * @param \Illuminate\Foundation\Application $app
+     * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */
     public function __construct($app)
@@ -57,7 +57,7 @@ class SettingsManager implements FactoryContract
     /**
      * Get a repository instance.
      *
-     * @param string $name
+     * @param  string  $name
      * @return mixed
      *
      * @throws \InvalidArgumentException
@@ -90,7 +90,7 @@ class SettingsManager implements FactoryContract
     /**
      * Create a new store instance.
      *
-     * @param  string $name
+     * @param  string  $name
      * @return mixed
      *
      * @throws \InvalidArgumentException
@@ -121,9 +121,9 @@ class SettingsManager implements FactoryContract
     /**
      * Call a custom driver creator.
      *
-     * @param  string $driver
-     * @param  string $storeName
-     * @param  array $config
+     * @param  string  $driver
+     * @param  string  $storeName
+     * @param  array  $config
      * @return mixed
      */
     protected function callCustomCreator($driver, $storeName, $config)
@@ -134,7 +134,7 @@ class SettingsManager implements FactoryContract
     /**
      * Create an instance of the array store.
      *
-     * @param string $name
+     * @param  string  $name
      * @return \Rudnev\Settings\Repository
      */
     protected function createArrayStore($name)
@@ -149,8 +149,8 @@ class SettingsManager implements FactoryContract
     /**
      * Create an instance of the database store.
      *
-     * @param string $name
-     * @param  array $config
+     * @param  string  $name
+     * @param  array  $config
      * @return \Rudnev\Settings\Repository
      */
     protected function createDatabaseStore($name, array $config)
@@ -175,8 +175,8 @@ class SettingsManager implements FactoryContract
     /**
      * Preload scopes.
      *
-     * @param array $scopes
-     * @param \Rudnev\Settings\Contracts\StoreContract $store
+     * @param  array  $scopes
+     * @param  \Rudnev\Settings\Contracts\StoreContract  $store
      * @return void
      */
     public function preloadScopes(array $scopes, StoreContract $store): void
@@ -191,7 +191,7 @@ class SettingsManager implements FactoryContract
     /**
      * Create a new settings repository with the given implementation.
      *
-     * @param  \Rudnev\Settings\Contracts\StoreContract $store
+     * @param  \Rudnev\Settings\Contracts\StoreContract  $store
      * @return \Rudnev\Settings\Repository
      */
     public function repository(StoreContract $store)
@@ -220,8 +220,8 @@ class SettingsManager implements FactoryContract
     /**
      * Wrap the store in the cache decorator.
      *
-     * @param \Rudnev\Settings\Contracts\StoreContract $store
-     * @param array $config
+     * @param  \Rudnev\Settings\Contracts\StoreContract  $store
+     * @param  array  $config
      * @return \Rudnev\Settings\Cache\CacheDecorator|\Rudnev\Settings\Contracts\StoreContract
      */
     protected function makeCacheWrapper(StoreContract $store, array $config = [])
@@ -246,8 +246,8 @@ class SettingsManager implements FactoryContract
     /**
      * Get the second level cache instance.
      *
-     * @param \Rudnev\Settings\Contracts\StoreContract|string $store
-     * @param array|null $config
+     * @param  \Rudnev\Settings\Contracts\StoreContract|string  $store
+     * @param  array|null  $config
      * @return \Rudnev\Settings\Cache\L2\SecondLevelCache
      */
     public function getSecondLevelCache($store, array $config = null): SecondLevelCache
@@ -296,7 +296,7 @@ class SettingsManager implements FactoryContract
     /**
      * Get the settings configuration.
      *
-     * @param  string $key
+     * @param  string  $key
      * @return mixed
      */
     protected function getConfig($key)
@@ -307,8 +307,8 @@ class SettingsManager implements FactoryContract
     /**
      * Register a custom driver creator Closure.
      *
-     * @param  string $driver
-     * @param  \Closure $callback
+     * @param  string  $driver
+     * @param  \Closure  $callback
      * @return $this
      */
     public function extend($driver, Closure $callback)
@@ -321,8 +321,8 @@ class SettingsManager implements FactoryContract
     /**
      * Dynamically call the default store instance.
      *
-     * @param  string $method
-     * @param  array $parameters
+     * @param  string  $method
+     * @param  array  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)

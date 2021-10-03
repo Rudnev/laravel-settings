@@ -47,9 +47,9 @@ class SecondLevelRegion
     /**
      * Region constructor.
      *
-     * @param string $name
-     * @param \Illuminate\Contracts\Cache\Repository $store
-     * @param int $lifetime
+     * @param  string  $name
+     * @param  \Illuminate\Contracts\Cache\Repository  $store
+     * @param  int  $lifetime
      * @return void
      */
     public function __construct(string $name, Repository $store, int $lifetime = 0)
@@ -72,7 +72,7 @@ class SecondLevelRegion
     /**
      * Set the name of this region.
      *
-     * @param string $name
+     * @param  string  $name
      * @return void
      */
     public function setName(string $name): void
@@ -93,7 +93,7 @@ class SecondLevelRegion
     /**
      * Set the cache store instance.
      *
-     * @param \Illuminate\Contracts\Cache\Repository $store
+     * @param  \Illuminate\Contracts\Cache\Repository  $store
      * @return void
      */
     public function setStore(Repository $store): void
@@ -114,7 +114,7 @@ class SecondLevelRegion
     /**
      * Set the time to life of the cache entry.
      *
-     * @param int $lifetime
+     * @param  int  $lifetime
      * @return void
      */
     public function setLifetime(int $lifetime): void
@@ -125,7 +125,7 @@ class SecondLevelRegion
     /**
      * Determine if an item exists.
      *
-     * @param string $key
+     * @param  string  $key
      * @return bool
      */
     public function has(string $key): bool
@@ -136,8 +136,8 @@ class SecondLevelRegion
     /**
      * Retrieve an item from the cache by key.
      *
-     * @param string $key
-     * @param \Closure|null $callback
+     * @param  string  $key
+     * @param  \Closure|null  $callback
      * @return mixed
      */
     public function get(string $key, Closure $callback = null)
@@ -158,9 +158,10 @@ class SecondLevelRegion
      *
      * Items not found in the cache will have a null value.
      *
-     * @param iterable $keys
-     * @param \Closure|null $callback
+     * @param  iterable  $keys
+     * @param  \Closure|null  $callback
      * @return array
+     *
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function getMultiple(iterable $keys, Closure $callback = null): array
@@ -201,8 +202,9 @@ class SecondLevelRegion
     /**
      * Retrieve all items from the cache.
      *
-     * @param \Closure|null $callback
+     * @param  \Closure|null  $callback
      * @return array
+     *
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function all(Closure $callback = null): array
@@ -228,8 +230,8 @@ class SecondLevelRegion
     /**
      * Store an item in the cache.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return void
      */
     public function put(string $key, $value): void
@@ -244,8 +246,9 @@ class SecondLevelRegion
     /**
      * Store multiple items in the cache.
      *
-     * @param iterable $values
+     * @param  iterable  $values
      * @return void
+     *
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function putMultiple(iterable $values): void
@@ -264,7 +267,7 @@ class SecondLevelRegion
     /**
      * Remove an item from the cache.
      *
-     * @param string $key
+     * @param  string  $key
      * @return void
      */
     public function forget(string $key): void
@@ -276,7 +279,7 @@ class SecondLevelRegion
     /**
      * Remove multiple items from the cache.
      *
-     * @param iterable $keys
+     * @param  iterable  $keys
      * @return void
      */
     public function forgetMultiple(iterable $keys): void
@@ -301,10 +304,10 @@ class SecondLevelRegion
     /**
      * Attempt to acquire the lock.
      *
-     * @param string $key
-     * @param Closure $callback
-     * @param int $lifetime
-     * @param int $timeout
+     * @param  string  $key
+     * @param  Closure  $callback
+     * @param  int  $lifetime
+     * @param  int  $timeout
      * @return void
      */
     public function lock(string $key, Closure $callback, int $lifetime = 60, int $timeout = 60): void
@@ -329,7 +332,7 @@ class SecondLevelRegion
     /**
      * Get the name of lock.
      *
-     * @param string $key
+     * @param  string  $key
      * @return string
      */
     protected function getLockName(string $key): string
@@ -380,7 +383,7 @@ class SecondLevelRegion
     /**
      * Get the cache entry key.
      *
-     * @param string $key
+     * @param  string  $key
      * @return string
      */
     protected function getCacheEntryKey(string $key): string

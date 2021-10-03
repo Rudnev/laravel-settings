@@ -60,7 +60,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Create a new settings repository instance.
      *
-     * @param \Rudnev\Settings\Contracts\StoreContract $store
+     * @param  \Rudnev\Settings\Contracts\StoreContract  $store
      * @return void
      */
     public function __construct(StoreContract $store)
@@ -82,7 +82,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Set the settings store implementation.
      *
-     * @param \Rudnev\Settings\Contracts\StoreContract $store
+     * @param  \Rudnev\Settings\Contracts\StoreContract  $store
      * @return void
      */
     public function setStore(StoreContract $store): void
@@ -103,7 +103,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Set the scope.
      *
-     * @param mixed $scope
+     * @param  mixed  $scope
      * @return void
      */
     public function setScope($scope): void
@@ -130,7 +130,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Set the event dispatcher implementation.
      *
-     * @param \Illuminate\Contracts\Events\Dispatcher $dispatcher
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
      * @return void
      */
     public function setEventDispatcher(DispatcherContract $dispatcher): void
@@ -141,7 +141,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Get the default value.
      *
-     * @param string $key
+     * @param  string  $key
      * @return mixed
      */
     public function getDefault(string $key = null)
@@ -156,8 +156,8 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Set the default value.
      *
-     * @param array|string $key
-     * @param mixed $value
+     * @param  array|string  $key
+     * @param  mixed  $value
      * @return void
      */
     public function setDefault($key, $value = null): void
@@ -172,7 +172,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Remove the default value.
      *
-     * @param array|string $key
+     * @param  array|string  $key
      * @return void
      */
     public function forgetDefault($key = null): void
@@ -197,7 +197,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Determine if an item exists in the settings store.
      *
-     * @param string $key
+     * @param  string  $key
      * @return bool
      */
     public function has(string $key): bool
@@ -208,8 +208,8 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Retrieve an item from the settings store by key.
      *
-     * @param string|iterable $key
-     * @param mixed $default
+     * @param  string|iterable  $key
+     * @param  mixed  $default
      * @return mixed
      */
     public function get($key, $default = null)
@@ -239,7 +239,7 @@ class Repository implements ArrayAccess, RepositoryContract
      *
      * Items not found in the settings store will have a null value.
      *
-     * @param iterable $keys
+     * @param  iterable  $keys
      * @return array
      */
     protected function getMultiple(iterable $keys): array
@@ -280,8 +280,8 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Store an item in the settings store.
      *
-     * @param string|iterable $key
-     * @param mixed|null $value
+     * @param  string|iterable  $key
+     * @param  mixed|null  $value
      * @return $this
      */
     public function set($key, $value = null): self
@@ -300,7 +300,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Store multiple items in the settings store.
      *
-     * @param iterable $values
+     * @param  iterable  $values
      * @return $this
      */
     protected function setMultiple(iterable $values): self
@@ -317,7 +317,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Remove an item from the settings store.
      *
-     * @param  string|iterable $key
+     * @param  string|iterable  $key
      * @return bool
      */
     public function forget($key): bool
@@ -338,7 +338,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Remove multiple items from the settings store.
      *
-     * @param  iterable $keys
+     * @param  iterable  $keys
      * @return bool
      */
     protected function forgetMultiple(iterable $keys): bool
@@ -373,8 +373,8 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Set the scope.
      *
-     * @param mixed $scope
-     * @param array $options
+     * @param  mixed  $scope
+     * @param  array  $options
      * @return \Rudnev\Settings\Contracts\RepositoryContract
      */
     public function scope($scope, $options = null): RepositoryContract
@@ -393,7 +393,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Fire an event for this settings instance.
      *
-     * @param object $event
+     * @param  object  $event
      * @return void
      */
     protected function event($event): void
@@ -413,7 +413,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Determine if a value exists.
      *
-     * @param string $key
+     * @param  string  $key
      * @return bool
      */
     public function offsetExists($key): bool
@@ -424,7 +424,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Retrieve an item from the settings store by key.
      *
-     * @param string $key
+     * @param  string  $key
      * @return mixed
      */
     public function offsetGet($key)
@@ -435,8 +435,8 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Store an item in the settings store.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return void
      */
     public function offsetSet($key, $value): void
@@ -447,7 +447,7 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Remove an item from the settings store.
      *
-     * @param string $key
+     * @param  string  $key
      * @return void
      */
     public function offsetUnset($key): void
@@ -458,8 +458,8 @@ class Repository implements ArrayAccess, RepositoryContract
     /**
      * Handle dynamic calls into macros or pass missing methods to the store.
      *
-     * @param string $method
-     * @param array $parameters
+     * @param  string  $method
+     * @param  array  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)

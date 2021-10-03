@@ -99,8 +99,8 @@ class DatabaseStore implements StoreContract
     /**
      * Create a new database store.
      *
-     * @param  \Illuminate\Database\ConnectionInterface $connection
-     * @param  array $names
+     * @param  \Illuminate\Database\ConnectionInterface  $connection
+     * @param  array  $names
      * @return void
      */
     public function __construct(ConnectionInterface $connection, array $names)
@@ -133,7 +133,7 @@ class DatabaseStore implements StoreContract
     /**
      * Set the settings store name.
      *
-     * @param string $name
+     * @param  string  $name
      * @return void
      */
     public function setName(string $name): void
@@ -154,7 +154,7 @@ class DatabaseStore implements StoreContract
     /**
      * Set the scope.
      *
-     * @param \Rudnev\Settings\Scopes\Scope $scope
+     * @param  \Rudnev\Settings\Scopes\Scope  $scope
      * @return void
      */
     public function setScope(Scope $scope): void
@@ -171,7 +171,7 @@ class DatabaseStore implements StoreContract
     /**
      * Determine if an item exists in the settings store.
      *
-     * @param string $key
+     * @param  string  $key
      * @return bool
      */
     public function has(string $key): bool
@@ -188,7 +188,7 @@ class DatabaseStore implements StoreContract
     /**
      * Retrieve an item from the settings store by key.
      *
-     * @param string $key
+     * @param  string  $key
      * @return mixed
      */
     public function get(string $key)
@@ -219,7 +219,7 @@ class DatabaseStore implements StoreContract
      *
      * Items not found in the settings store will have a null value.
      *
-     * @param iterable $keys
+     * @param  iterable  $keys
      * @return array
      */
     public function getMultiple(iterable $keys): array
@@ -283,8 +283,8 @@ class DatabaseStore implements StoreContract
     /**
      * Store an item in the settings store.
      *
-     * @param  string $key
-     * @param  mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return void
      */
     public function set(string $key, $value): void
@@ -308,7 +308,7 @@ class DatabaseStore implements StoreContract
     /**
      * Store multiple items in the settings store.
      *
-     * @param  iterable $values
+     * @param  iterable  $values
      * @return void
      */
     public function setMultiple(iterable $values): void
@@ -323,8 +323,8 @@ class DatabaseStore implements StoreContract
      * Prepare the item for setting it to the store,
      * if the key is a chain like a foo.bar.baz.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return array
      */
     protected function prepareIfNested(string $key, $value): array
@@ -347,7 +347,7 @@ class DatabaseStore implements StoreContract
     /**
      * Remove an item from the settings store.
      *
-     * @param  string $key
+     * @param  string  $key
      * @return bool
      */
     public function forget(string $key): bool
@@ -378,7 +378,7 @@ class DatabaseStore implements StoreContract
     /**
      * Remove multiple items from the settings store.
      *
-     * @param  iterable $keys
+     * @param  iterable  $keys
      * @return bool
      */
     public function forgetMultiple(iterable $keys): bool
@@ -403,7 +403,7 @@ class DatabaseStore implements StoreContract
     /**
      * Set the scope.
      *
-     * @param \Rudnev\Settings\Scopes\Scope $scope
+     * @param  \Rudnev\Settings\Scopes\Scope  $scope
      * @return \Rudnev\Settings\Contracts\StoreContract
      */
     public function scope(Scope $scope): StoreContract

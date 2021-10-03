@@ -38,9 +38,9 @@ class CacheDecorator implements StoreContract
     /**
      * CacheDecorator constructor.
      *
-     * @param \Rudnev\Settings\Contracts\StoreContract $store
-     * @param \Rudnev\Settings\Cache\L1\FirstLevelCache $firstLevelCache
-     * @param \Rudnev\Settings\Cache\L2\SecondLevelCache $secondLevelCache
+     * @param  \Rudnev\Settings\Contracts\StoreContract  $store
+     * @param  \Rudnev\Settings\Cache\L1\FirstLevelCache  $firstLevelCache
+     * @param  \Rudnev\Settings\Cache\L2\SecondLevelCache  $secondLevelCache
      * @return void
      */
     public function __construct(
@@ -66,7 +66,7 @@ class CacheDecorator implements StoreContract
     /**
      * Set the settings store implementation.
      *
-     * @param \Rudnev\Settings\Contracts\StoreContract $store
+     * @param  \Rudnev\Settings\Contracts\StoreContract  $store
      * @return void
      */
     public function setStore(StoreContract $store): void
@@ -87,7 +87,7 @@ class CacheDecorator implements StoreContract
     /**
      * Set the first level cache instance.
      *
-     * @param \Rudnev\Settings\Cache\L1\FirstLevelCache $cache
+     * @param  \Rudnev\Settings\Cache\L1\FirstLevelCache  $cache
      * @return void
      */
     public function setFirstLevelCache(FirstLevelCache $cache): void
@@ -108,7 +108,7 @@ class CacheDecorator implements StoreContract
     /**
      * Set the second level cache instance.
      *
-     * @param \Rudnev\Settings\Cache\L2\SecondLevelCache $secondLevelCache
+     * @param  \Rudnev\Settings\Cache\L2\SecondLevelCache  $secondLevelCache
      * @return void
      */
     public function setSecondLevelCache(SecondLevelCache $secondLevelCache): void
@@ -150,7 +150,7 @@ class CacheDecorator implements StoreContract
     /**
      * Set the scope.
      *
-     * @param \Rudnev\Settings\Scopes\Scope $scope
+     * @param  \Rudnev\Settings\Scopes\Scope  $scope
      * @return void
      */
     public function setScope(Scope $scope): void
@@ -181,7 +181,7 @@ class CacheDecorator implements StoreContract
     /**
      * Determine if an item exists in the settings store.
      *
-     * @param  string $key
+     * @param  string  $key
      * @return bool
      */
     public function has(string $key): bool
@@ -192,7 +192,7 @@ class CacheDecorator implements StoreContract
     /**
      * Retrieve an item from the settings store by key.
      *
-     * @param  string $key
+     * @param  string  $key
      * @return mixed
      */
     public function get(string $key)
@@ -219,7 +219,7 @@ class CacheDecorator implements StoreContract
      *
      * Items not found in the settings store will have a null value.
      *
-     * @param  iterable $keys
+     * @param  iterable  $keys
      * @return array
      */
     public function getMultiple(iterable $keys): array
@@ -268,8 +268,8 @@ class CacheDecorator implements StoreContract
     /**
      * Store an item in the settings store.
      *
-     * @param  string $key
-     * @param  mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return void
      */
     public function set(string $key, $value): void
@@ -284,7 +284,7 @@ class CacheDecorator implements StoreContract
     /**
      * Store multiple items in the settings store.
      *
-     * @param  iterable $values
+     * @param  iterable  $values
      * @return void
      */
     public function setMultiple(iterable $values): void
@@ -299,7 +299,7 @@ class CacheDecorator implements StoreContract
     /**
      * Remove an item from the settings store.
      *
-     * @param  string $key
+     * @param  string  $key
      * @return bool
      */
     public function forget(string $key): bool
@@ -317,7 +317,7 @@ class CacheDecorator implements StoreContract
     /**
      * Remove multiple items from the settings store.
      *
-     * @param  iterable $keys
+     * @param  iterable  $keys
      * @return bool
      */
     public function forgetMultiple(iterable $keys): bool
@@ -352,7 +352,7 @@ class CacheDecorator implements StoreContract
     /**
      * Set the scope.
      *
-     * @param \Rudnev\Settings\Scopes\Scope $scope
+     * @param  \Rudnev\Settings\Scopes\Scope  $scope
      * @return \Rudnev\Settings\Cache\CacheDecorator
      */
     public function scope(Scope $scope): StoreContract

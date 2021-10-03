@@ -23,8 +23,8 @@ class PropertyWritten extends StoreEvent
     /**
      * PropertyWritten constructor.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      */
     public function __construct(string $key, $value)
     {

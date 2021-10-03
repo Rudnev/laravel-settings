@@ -6,8 +6,8 @@ if (! function_exists('settings')) {
      *
      * If an array is passed as the key, we will assume you want to set an array of values.
      *
-     * @param  string|iterable $key
-     * @param  mixed|null $default
+     * @param  string|iterable  $key
+     * @param  mixed|null  $default
      * @return mixed|\Rudnev\Settings\SettingsManager
      */
     function settings($key = null, $default = null)

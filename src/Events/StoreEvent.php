@@ -35,7 +35,7 @@ class StoreEvent
     /**
      * Set the store name.
      *
-     * @param string $storeName
+     * @param  string  $storeName
      */
     public function setStoreName(string $storeName)
     {
@@ -55,7 +55,7 @@ class StoreEvent
     /**
      * Set the scope.
      *
-     * @param \Rudnev\Settings\Scopes\Scope $scope
+     * @param  \Rudnev\Settings\Scopes\Scope  $scope
      */
     public function setScope(Scope $scope)
     {
