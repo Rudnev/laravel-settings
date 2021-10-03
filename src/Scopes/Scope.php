@@ -16,7 +16,7 @@ class Scope
     /**
      * Scope constructor.
      *
-     * @param string $identifier
+     * @param  string  $identifier
      * @return void
      */
     public function __construct(string $identifier = 'default')

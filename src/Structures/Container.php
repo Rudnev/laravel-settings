@@ -40,7 +40,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Create a new container instance.
      *
-     * @param array $input
+     * @param  array  $input
      */
     public function __construct(array $input = [])
     {
@@ -52,7 +52,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Fill the container with an array of items.
      *
-     * @param array $items
+     * @param  array  $items
      */
     public function fill(array $items)
     {
@@ -64,7 +64,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Substitute the array of items.
      *
-     * @param array $items
+     * @param  array  $items
      */
     public function substitute(array $items)
     {
@@ -86,7 +86,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Set the original state.
      *
-     * @param array $original
+     * @param  array  $original
      */
     public function setOriginal(array $original)
     {
@@ -96,7 +96,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Get the default value.
      *
-     * @param string $key
+     * @param  string  $key
      * @return mixed
      */
     public function getDefault(string $key = null)
@@ -109,8 +109,8 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Set the default value.
      *
-     * @param array|string $key
-     * @param mixed $value
+     * @param  array|string  $key
+     * @param  mixed  $value
      * @return void
      */
     public function setDefault($key, $value = null): void
@@ -125,7 +125,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Remove the default value.
      *
-     * @param array|string $key
+     * @param  array|string  $key
      * @return void
      */
     public function forgetDefault($key = null): void
@@ -150,7 +150,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Determine if an item exists at an offset.
      *
-     * @param mixed $key
+     * @param  mixed  $key
      * @return bool
      */
     public function offsetExists($key)
@@ -161,7 +161,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Retrieve an item by key.
      *
-     * @param mixed $key
+     * @param  mixed  $key
      * @return mixed
      */
     public function offsetGet($key)
@@ -174,8 +174,8 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Store an item.
      *
-     * @param mixed $key
-     * @param mixed $value
+     * @param  mixed  $key
+     * @param  mixed  $value
      * @return void
      */
     public function offsetSet($key, $value)
@@ -188,7 +188,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Unset the item at a given offset.
      *
-     * @param string $key
+     * @param  string  $key
      * @return void
      */
     public function offsetUnset($key)
@@ -265,7 +265,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Get the items as JSON.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      */
     public function toJson($options = 0)
@@ -286,7 +286,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Check the type of key.
      *
-     * @param mixed $key
+     * @param  mixed  $key
      * @return void
      */
     protected function checkKeyType(&$key)

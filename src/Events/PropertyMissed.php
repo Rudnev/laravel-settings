@@ -16,7 +16,7 @@ class PropertyMissed extends StoreEvent
     /**
      * PropertyMissed constructor.
      *
-     * @param string $key
+     * @param  string  $key
      */
     public function __construct(string $key)
     {

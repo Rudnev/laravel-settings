@@ -46,7 +46,7 @@ class SecondLevelCache
     /**
      * SecondLevelCache constructor.
      *
-     * @param \Illuminate\Contracts\Cache\Repository $store
+     * @param  \Illuminate\Contracts\Cache\Repository  $store
      * @return void
      */
     public function __construct(Repository $store)
@@ -67,7 +67,7 @@ class SecondLevelCache
     /**
      * Set the cache store instance.
      *
-     * @param \Illuminate\Contracts\Cache\Repository $store
+     * @param  \Illuminate\Contracts\Cache\Repository  $store
      */
     public function setStore(Repository $store): void
     {
@@ -87,7 +87,7 @@ class SecondLevelCache
     /**
      * Set the cache key prefix.
      *
-     * @param string $prefix
+     * @param  string  $prefix
      */
     public function setPrefix(string $prefix): void
     {
@@ -107,7 +107,7 @@ class SecondLevelCache
     /**
      * Set the default lifetime.
      *
-     * @param int $lifetime
+     * @param  int  $lifetime
      */
     public function setDefaultLifetime(int $lifetime): void
     {
@@ -117,7 +117,7 @@ class SecondLevelCache
     /**
      * Get the cache region by name.
      *
-     * @param string $name
+     * @param  string  $name
      * @return \Rudnev\Settings\Cache\L2\SecondLevelRegion
      */
     public function region(string $name): SecondLevelRegion
@@ -132,7 +132,7 @@ class SecondLevelCache
     /**
      * Create a cache region instance.
      *
-     * @param string $name
+     * @param  string  $name
      * @return \Rudnev\Settings\Cache\L2\SecondLevelRegion
      */
     protected function createRegion(string $name): SecondLevelRegion

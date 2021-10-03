@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool flush()
  * @method static \Rudnev\Settings\Contracts\RepositoryContract store()
  * @method static \Rudnev\Settings\SettingsManager extend(string $driver, \Closure $callback)
+ *
  * @see \Rudnev\Settings\SettingsManager
  * @see \Rudnev\Settings\Repository
  */

@@ -33,7 +33,7 @@ class FirstLevelRegion
     /**
      * Region constructor.
      *
-     * @param string $name
+     * @param  string  $name
      * @return void
      */
     public function __construct(string $name)
@@ -54,7 +54,7 @@ class FirstLevelRegion
     /**
      * Set the name of this region.
      *
-     * @param string $name
+     * @param  string  $name
      * @return void
      */
     public function setName(string $name): void
@@ -65,7 +65,7 @@ class FirstLevelRegion
     /**
      * Determine if an item exists.
      *
-     * @param string $key
+     * @param  string  $key
      * @return bool
      */
     public function has(string $key): bool
@@ -76,8 +76,8 @@ class FirstLevelRegion
     /**
      * Retrieve an item from the cache by key.
      *
-     * @param string $key
-     * @param \Closure|null $callback
+     * @param  string  $key
+     * @param  \Closure|null  $callback
      * @return mixed
      */
     public function get(string $key, Closure $callback = null)
@@ -98,8 +98,8 @@ class FirstLevelRegion
      *
      * Items not found in the cache will have a null value.
      *
-     * @param iterable $keys
-     * @param \Closure|null $callback
+     * @param  iterable  $keys
+     * @param  \Closure|null  $callback
      * @return array
      */
     public function getMultiple(iterable $keys, Closure $callback = null): array
@@ -132,7 +132,7 @@ class FirstLevelRegion
     /**
      * Retrieve all items from the cache.
      *
-     * @param \Closure|null $callback
+     * @param  \Closure|null  $callback
      * @return array
      */
     public function all(Closure $callback = null): array
@@ -153,8 +153,8 @@ class FirstLevelRegion
     /**
      * Store an item in the cache.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return void
      */
     public function put(string $key, $value): void
@@ -165,7 +165,7 @@ class FirstLevelRegion
     /**
      * Store multiple items in the cache.
      *
-     * @param iterable $values
+     * @param  iterable  $values
      * @return void
      */
     public function putMultiple(iterable $values): void
@@ -178,7 +178,7 @@ class FirstLevelRegion
     /**
      * Remove an item from the cache.
      *
-     * @param  string $key
+     * @param  string  $key
      * @return void
      */
     public function forget(string $key): void
@@ -189,7 +189,7 @@ class FirstLevelRegion
     /**
      * Remove multiple items from the cache.
      *
-     * @param iterable $keys
+     * @param  iterable  $keys
      * @return void
      */
     public function forgetMultiple(iterable $keys): void

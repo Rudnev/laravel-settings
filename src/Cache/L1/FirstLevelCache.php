@@ -16,7 +16,7 @@ class FirstLevelCache
     /**
      * Get the cache region by name.
      *
-     * @param string $name
+     * @param  string  $name
      * @return \Rudnev\Settings\Cache\L1\FirstLevelRegion
      */
     public function region(string $name): FirstLevelRegion
