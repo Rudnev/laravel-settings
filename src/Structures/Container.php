@@ -259,7 +259,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
      */
     public function toArray()
     {
-        return $this->items;
+        return array_replace_recursive($this->getDefault(), $this->items);
     }
 
     /**
@@ -280,7 +280,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
      */
     public function jsonSerialize()
     {
-        return $this->items;
+        return $this->toArray();
     }
 
     /**

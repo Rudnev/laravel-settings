@@ -61,6 +61,7 @@ class HasSettingsTest extends TestCase
         $model->exists = true;
         $model->setSettingsAttribute(['foo' => 'bar']);
         $this->assertEquals('bar', $model->settings['foo']);
+        $this->assertEquals(['foo' => 'bar', 'qux' => 'qux-default'], $model->settings->toArray());
 
         $model = new Model();
         $model->settings['bar'] = 'baz';

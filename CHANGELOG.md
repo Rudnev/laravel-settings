@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 1.5.1 - 2021-10-03
+- The `Container::toArray()` and `Container::toJson()` methods now returns default values
+
 ## 1.5.0 - 2020-12-31
 - Added Laravel 8.0 support
 - Added PHP 8.0 support

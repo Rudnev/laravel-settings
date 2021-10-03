@@ -13,6 +13,7 @@ class ContainerTest extends TestCase
         $this->assertNull($container->getDefault('foo'));
         $this->assertEquals([], $container->getDefault());
         $container->setDefault('foo', 'bar');
+        $this->assertEquals(['foo' => 'bar'], $container->toArray());
         $container->setDefault(['bar' => 'baz', 'baz' => 'qux']);
         $this->assertEquals('bar', $container->getDefault('foo'));
         $this->assertEquals(['foo' => 'bar', 'bar' => 'baz', 'baz' => 'qux'], $container->getDefault());
