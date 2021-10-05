@@ -271,7 +271,7 @@ class Repository implements ArrayAccess, RepositoryContract
      */
     public function all(): array
     {
-        $data = $this->store->all();
+        $data = array_replace_recursive($this->default, $this->store->all());
 
         $this->event(new AllSettingsReceived());
 

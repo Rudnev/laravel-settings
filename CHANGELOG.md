@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 1.5.2 - 2021-10-05
+- The `Repository::all()` method now returns default values
+- Added `EloquentScope` class
+
 ## 1.5.1 - 2021-10-03
 - The `Container::toArray()` and `Container::toJson()` methods now returns default values
 

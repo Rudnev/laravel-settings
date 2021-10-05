@@ -67,7 +67,7 @@ trait HasSettings
     public function getSettingsAttribute()
     {
         if (is_null($this->settingsAttribute)) {
-            $this->settingsAttribute = new Container($this->exists ? $this->settings()->all() : []);
+            $this->settingsAttribute = new Container($this->exists ? $this->settings()->getStore()->all() : []);
 
             $this->settingsAttribute->setDefault($this->settingsConfig['default'] ?? []);
         }
