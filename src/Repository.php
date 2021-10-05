@@ -6,6 +6,7 @@ namespace Rudnev\Settings;
 
 use ArrayAccess;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Traits\Macroable;
 use Rudnev\Settings\Contracts\RepositoryContract;
@@ -17,7 +18,7 @@ use Rudnev\Settings\Events\PropertyReceived;
 use Rudnev\Settings\Events\PropertyRemoved;
 use Rudnev\Settings\Events\PropertyWritten;
 use Rudnev\Settings\Events\StoreEvent;
-use Rudnev\Settings\Scopes\EntityScope;
+use Rudnev\Settings\Scopes\EloquentScope;
 use Rudnev\Settings\Scopes\Scope;
 
 /**
@@ -108,8 +109,8 @@ class Repository implements ArrayAccess, RepositoryContract
      */
     public function setScope($scope): void
     {
-        if (is_object($scope) && method_exists($scope, 'getKey')) {
-            $this->scope = new EntityScope(get_class($scope), (string) $scope->getKey());
+        if ($scope instanceof Model) {
+            $this->scope = new EloquentScope($scope);
         } else {
             $this->scope = new Scope((string) $scope);
         }
