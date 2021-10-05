@@ -2,9 +2,9 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
-## 1.5.2 - 2021-10-05
+## 2.0.0 - 2021-10-05
 - The `Repository::all()` method now returns default values
-- Added `EloquentScope` class
+- Now the "morph map" is used to save the polymorphic relation instead of fully-qualified class name (if [configured](https://laravel.com/docs/8.x/eloquent-relationships#custom-polymorphic-types) in the application).
 
 ## 1.5.1 - 2021-10-03
 - The `Container::toArray()` and `Container::toJson()` methods now returns default values

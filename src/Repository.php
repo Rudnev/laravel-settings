@@ -196,6 +196,20 @@ class Repository implements ArrayAccess, RepositoryContract
     }
 
     /**
+     * Do not use default values.
+     *
+     * @return RepositoryContract
+     */
+    public function withoutDefault(): RepositoryContract
+    {
+        $repo = clone $this;
+
+        $repo->forgetDefault();
+
+        return $repo;
+    }
+
+    /**
      * Determine if an item exists in the settings store.
      *
      * @param  string  $key
