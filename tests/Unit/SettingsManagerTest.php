@@ -167,7 +167,7 @@ class SettingsManagerTest extends TestCase
         $app['config']['settings.stores.foo-store'] = ['driver' => 'bar-driver'];
         $manager = new SettingsManager($app);
 
-        $repo = m::mock('Rudnev\Settings\Contracts\RepositoryContract');
+        $repo = m::spy('Rudnev\Settings\Contracts\RepositoryContract');
 
         $manager->extend('bar-driver', function () use ($repo) {
             return $repo;

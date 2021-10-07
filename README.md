@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/Rudnev/laravel-settings.svg?branch=master)](https://travis-ci.org/Rudnev/laravel-settings)
 [![StyleCI](https://github.styleci.io/repos/141638505/shield?branch=master&style=flat)](https://github.styleci.io/repos/141638505)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Laravel Octane Compatible](https://img.shields.io/badge/Laravel%20Octane-Compatible-success?style=flat&logo=laravel)](https://github.com/laravel/octane)
 
 Persistent settings for Laravel Framework 
 

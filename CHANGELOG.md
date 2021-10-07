@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 2.1.0 - 2021-10-07
+- Added Laravel Octane support
+- Fixed possible memory leaks
+
 ## 2.0.0 - 2021-10-05
 - The `Repository::all()` method now returns default values
 - Now the "morph map" is used to save the polymorphic relation instead of fully-qualified class name (if [configured](https://laravel.com/docs/8.x/eloquent-relationships#custom-polymorphic-types) in the application).

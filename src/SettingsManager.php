@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use Rudnev\Settings\Cache\CacheDecorator;
 use Rudnev\Settings\Cache\L1\FirstLevelCache;
 use Rudnev\Settings\Cache\L2\SecondLevelCache;
+use Rudnev\Settings\Cache\L2\SecondLevelRegion;
 use Rudnev\Settings\Contracts\FactoryContract;
 use Rudnev\Settings\Contracts\StoreContract;
 use Rudnev\Settings\Scopes\Scope;
@@ -319,6 +320,27 @@ class SettingsManager implements FactoryContract
     }
 
     /**
+     * Cleanup.
+     *
+     * @return void
+     */
+    public function gc()
+    {
+        foreach ($this->stores as $repo) {
+            $store = $repo->getStore();
+
+            if ($store instanceof CacheDecorator) {
+                $store->getFirstLevelCache()->flush(
+                    $this->getConfig('stores.'.$store->getName().'.scopes.preload') ?? []
+                );
+            }
+        }
+
+        SecondLevelCache::reset();
+        SecondLevelRegion::reset();
+    }
+
+    /**
      * Dynamically call the default store instance.
      *
      * @param  string  $method
@@ -328,5 +350,15 @@ class SettingsManager implements FactoryContract
     public function __call($method, $parameters)
     {
         return $this->store()->$method(...$parameters);
+    }
+
+    /**
+     * Handle the object's destruction.
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        $this->gc();
     }
 }

@@ -65,7 +65,7 @@ interface StoreContract
     public function getMultiple(iterable $keys): array;
 
     /**
-     * Get all of the settings items.
+     * Get all the settings items.
      *
      * @return array
      */

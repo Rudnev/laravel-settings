@@ -22,7 +22,7 @@ interface RepositoryContract
     public function get($key, $default = null);
 
     /**
-     * Get all of the settings items.
+     * Get all the settings items.
      *
      * @return array
      */
