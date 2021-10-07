@@ -1,6 +1,5 @@
-## Laravel Settings
-
-
+Laravel Settings
+=============================
 [![Build Status](https://app.travis-ci.com/Rudnev/laravel-settings.svg?branch=master)](https://app.travis-ci.com/Rudnev/laravel-settings)
 [![StyleCI](https://github.styleci.io/repos/141638505/shield?branch=master&style=flat)](https://github.styleci.io/repos/141638505)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -13,6 +12,7 @@ Persistent settings for Laravel Framework
 + Events
 + Cache
 + Extendable Settings Manager
++ [Laravel Octane](https://laravel.com/docs/octane) compatible
 
 ### Requirements
 
@@ -56,6 +56,19 @@ class MyController extends Controller
 }
 ```
 
+Getting started
+=============================
+
+[Installation](#installation)  
+[API](#api)  
+[Scopes](#scopes)  
+[Translation](#translation)  
+[Cache](#cache)  
+[Events](#events)  
+[Custom store](#custom-store)
+
+----------------------------------
+
 ### Installation
 
 You can install the package via composer:
@@ -64,17 +77,12 @@ You can install the package via composer:
 composer require rudnev/laravel-settings
 ```
 
-Publish [the config](config/settings.php) file with:
+Publish [the config](config/settings.php) file and [the migration](database/migrations/create_settings_table.stub) with:
 
 ```bash
-php artisan vendor:publish --provider="Rudnev\Settings\ServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Rudnev\Settings\ServiceProvider"
 ```
 
-Publish [the migration](database/migrations/create_settings_table.stub) with:
-
-```bash
-php artisan vendor:publish --provider="Rudnev\Settings\ServiceProvider" --tag="migrations"
-```
 
 After the migration has been published you can create the settings table by running the migrations:
 
@@ -351,7 +359,7 @@ Finally, you can access your store as follows:
 Settings::store('mongo')->get('foo');
 ```
 
-## Credits
+### Credits
 
 - [Andrei Rudnev](https://github.com/Rudnev)
 
