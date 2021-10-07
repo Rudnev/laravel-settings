@@ -129,7 +129,7 @@ class CacheDecorator implements StoreContract
     /**
      * Set the settings store name.
      *
-     * @param   string   $name
+     * @param  string  $name
      * @return void
      */
     public function setName(string $name): void
