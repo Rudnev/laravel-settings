@@ -1,9 +1,9 @@
-## Laravel Settings
-
-
-[![Build Status](https://travis-ci.org/Rudnev/laravel-settings.svg?branch=master)](https://travis-ci.org/Rudnev/laravel-settings)
+Laravel Settings
+=============================
+[![Build Status](https://app.travis-ci.com/Rudnev/laravel-settings.svg?branch=master)](https://app.travis-ci.com/Rudnev/laravel-settings)
 [![StyleCI](https://github.styleci.io/repos/141638505/shield?branch=master&style=flat)](https://github.styleci.io/repos/141638505)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Laravel Octane Compatible](https://img.shields.io/badge/Laravel%20Octane-Compatible-success?style=flat&logo=laravel)](https://github.com/laravel/octane)
 
 Persistent settings for Laravel Framework 
 
@@ -12,6 +12,7 @@ Persistent settings for Laravel Framework
 + Events
 + Cache
 + Extendable Settings Manager
++ [Laravel Octane](https://laravel.com/docs/octane) compatible
 
 ### Requirements
 
@@ -55,7 +56,20 @@ class MyController extends Controller
 }
 ```
 
-### Installation
+Getting started
+=============================
+
+[Installation](#installation)  
+[API](#api)  
+[Scopes](#scopes)  
+[Translation](#translation)  
+[Cache](#cache)  
+[Events](#events)  
+[Custom store](#custom-store)
+
+----------------------------------
+
+## Installation
 
 You can install the package via composer:
 
@@ -63,17 +77,12 @@ You can install the package via composer:
 composer require rudnev/laravel-settings
 ```
 
-Publish [the config](config/settings.php) file with:
+Publish [the config](config/settings.php) file and [the migration](database/migrations/create_settings_table.stub) with:
 
 ```bash
-php artisan vendor:publish --provider="Rudnev\Settings\ServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Rudnev\Settings\ServiceProvider"
 ```
 
-Publish [the migration](database/migrations/create_settings_table.stub) with:
-
-```bash
-php artisan vendor:publish --provider="Rudnev\Settings\ServiceProvider" --tag="migrations"
-```
 
 After the migration has been published you can create the settings table by running the migrations:
 
@@ -81,7 +90,7 @@ After the migration has been published you can create the settings table by runn
 php artisan migrate
 ```
 
-### API
+## API
 
 #### Check the value
 Determine if an item exists in the settings store.
@@ -109,7 +118,7 @@ Settings::get(['foo', 'bar', 'baz']);
 Settings::get(['foo', 'bar', 'baz' => 'default']);
 ```
 #### Get all values
-Get all of the settings items.
+Get all the settings items.
 ```php
 Settings::all();
 ```
@@ -153,7 +162,7 @@ Settings::has('products.desk.height');
 Settings::get('products.desk');
 ```
 
-### Scopes
+## Scopes
 
 If you want to have settings for your model you can use `scope` method:
 
@@ -244,7 +253,7 @@ Settings::scope('my-landing-page')->set('tracking_id', 'UA-000000-2');
 Settings::scope('my-landing-page')->get('tracking_id');
 ```
 
-### Translation
+## Translation
 
 I suggest using the built-in laravel methods to translate any keys, names and descriptions. You can use this approach for most laravel packages, there is no need to store translations within different database tables when you can do this in one place.
 
@@ -294,7 +303,7 @@ foreach ($userSettings->all() as $key => $value)
 }
 ```
 
-### Cache
+## Cache
 
 Cache is enabled by default, you can change this in your `config/settings.php` file.
 
@@ -304,7 +313,7 @@ To clear the cache you can run the follow Artisan command:
 php artisan settings:clear-cache
 ```
 
-### Events
+## Events
 
 Events are triggered if this is not disabled via config (enabled by default).
 
@@ -318,7 +327,7 @@ Events are triggered if this is not disabled via config (enabled by default).
 | [\Rudnev\Settings\Events\AllSettingsReceived](src/Events/AllSettingsReceived.php) | Fired after retrieving all items from the store.
 | [\Rudnev\Settings\Events\AllSettingsRemoved](src/Events/AllSettingsRemoved.php) | Fired after removing all items from the store.
 
-### Custom Store
+## Custom Store
 
 To create your own store, you must use the `extend` method on the `SettingsManager`, which is used to bind a custom driver resolver to the manager, but first you need implement the
 [StoreContract](src/Contracts/StoreContract.php):
@@ -354,6 +363,6 @@ Settings::store('mongo')->get('foo');
 
 - [Andrei Rudnev](https://github.com/Rudnev)
 
-### License
+## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.

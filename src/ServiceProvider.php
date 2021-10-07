@@ -6,16 +6,11 @@ use Illuminate\Support\ServiceProvider as BaseProvider;
 use Rudnev\Settings\Commands\ClearCache;
 use Rudnev\Settings\Contracts\FactoryContract;
 use Rudnev\Settings\Contracts\RepositoryContract;
+use Rudnev\Settings\Listeners\OctaneEventSubscriber;
+use Rudnev\Settings\Listeners\QueueEventSubscriber;
 
 class ServiceProvider extends BaseProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = true;
-
     /**
      * Bootstrap services.
      *
@@ -23,22 +18,12 @@ class ServiceProvider extends BaseProvider
      */
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__.'/../config/settings.php' => config_path('settings.php'),
-        ], 'config');
+        $this->registerPublishables();
 
-        if (! class_exists('CreateSettingsTable')) {
-            $timestamp = date('Y_m_d_His', time());
+        $this->registerListeners();
 
-            $this->publishes([
-                __DIR__.'/../database/migrations/create_settings_table.stub' => $this->app['path.database']."/migrations/{$timestamp}_create_settings_table.php",
-            ], 'migrations');
-        }
-
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                ClearCache::class,
-            ]);
+        if (isset($_SERVER['LARAVEL_OCTANE'])) {
+            $this->bootOctane();
         }
     }
 
@@ -60,6 +45,66 @@ class ServiceProvider extends BaseProvider
         });
 
         $this->addAliases();
+
+        $this->registerCommands();
+    }
+
+    /**
+     * Bootstrap for Laravel Octane.
+     *
+     * @return void
+     */
+    public function bootOctane(): void
+    {
+        $this->app['config']->push('octane.warm', 'settings');
+
+        $this->app['events']->subscribe(OctaneEventSubscriber::class);
+    }
+
+    /**
+     * Register publishables.
+     *
+     * @return void
+     */
+    public function registerPublishables(): void
+    {
+        $this->publishes([
+            __DIR__.'/../config/settings.php' => config_path('settings.php'),
+        ], 'config');
+
+        if (! class_exists('CreateSettingsTable')) {
+            $timestamp = date('Y_m_d_His', time());
+
+            $this->publishes([
+                __DIR__.'/../database/migrations/create_settings_table.stub' => $this->app['path.database']."/migrations/{$timestamp}_create_settings_table.php",
+            ], 'migrations');
+        }
+    }
+
+    /**
+     * Register commands.
+     *
+     * @return void
+     */
+    public function registerCommands(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ClearCache::class,
+            ]);
+        }
+    }
+
+    /**
+     * Register event listeners.
+     *
+     * @return void
+     */
+    public function registerListeners(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->app['events']->subscribe(QueueEventSubscriber::class);
+        }
     }
 
     /**

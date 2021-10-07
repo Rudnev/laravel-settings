@@ -129,7 +129,7 @@ class CacheDecorator implements StoreContract
     /**
      * Set the settings store name.
      *
-     * @param $name
+     * @param  string  $name
      * @return void
      */
     public function setName(string $name): void
@@ -252,7 +252,7 @@ class CacheDecorator implements StoreContract
     }
 
     /**
-     * Get all of the settings items.
+     * Get all the settings items.
      *
      * @return array
      */
@@ -293,7 +293,13 @@ class CacheDecorator implements StoreContract
 
         $this->getFirstLevelRegion()->putMultiple($values);
 
-        $this->getSecondLevelRegion()->forgetMultiple($this->getKeyRoot(array_keys($values)));
+        $keys = [];
+
+        foreach ($values as $k => $v) {
+            $keys[] = $k;
+        }
+
+        $this->getSecondLevelRegion()->forgetMultiple($this->getKeyRoot($keys));
     }
 
     /**

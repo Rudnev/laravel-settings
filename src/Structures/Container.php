@@ -96,7 +96,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
     /**
      * Get the default value.
      *
-     * @param  string  $key
+     * @param  string|null  $key
      * @return mixed
      */
     public function getDefault(string $key = null)

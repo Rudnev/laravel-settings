@@ -31,10 +31,21 @@ class FirstLevelCache
     /**
      * Remove all items from the cache.
      *
+     * @param  array  $except
      * @return void
      */
-    public function flush(): void
+    public function flush(array $except = []): void
     {
-        $this->regions = [];
+        if ($except) {
+            $regions = [];
+
+            foreach ($except as $name) {
+                $regions[$name] = $this->regions[$name];
+            }
+
+            $this->regions = $regions;
+        } else {
+            $this->regions = [];
+        }
     }
 }

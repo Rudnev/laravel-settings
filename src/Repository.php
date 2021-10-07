@@ -279,7 +279,7 @@ class Repository implements ArrayAccess, RepositoryContract
     }
 
     /**
-     * Get all of the settings items.
+     * Get all the settings items.
      *
      * @return array
      */
