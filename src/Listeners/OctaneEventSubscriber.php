@@ -20,12 +20,10 @@ class OctaneEventSubscriber
     /**
      * Register the listeners for the subscriber.
      *
-     * @return array
+     * @param  Illuminate\Events\Dispatcher  $events
      */
-    public function subscribe()
+    public function subscribe($events)
     {
-        return [
-            RequestTerminated::class => 'gc',
-        ];
+        $events->listen(RequestTerminated::class, __CLASS__.'@gc');
     }
 }

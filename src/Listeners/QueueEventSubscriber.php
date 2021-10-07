@@ -21,13 +21,11 @@ class QueueEventSubscriber
     /**
      * Register the listeners for the subscriber.
      *
-     * @return array
+     * @param  Illuminate\Events\Dispatcher  $events
      */
-    public function subscribe()
+    public function subscribe($events)
     {
-        return [
-            JobProcessed::class => 'gc',
-            JobFailed::class => 'gc',
-        ];
+        $events->listen(JobProcessed::class, __CLASS__.'@gc');
+        $events->listen(JobFailed::class, __CLASS__.'@gc');
     }
 }
