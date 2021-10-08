@@ -23,20 +23,27 @@ Persistent settings for Laravel Framework
 
 Retrieve and store data using the global `settings` function:
 ```php
-settings(['foo' => 'bar']);
-settings('foo');
+// app settings:
+
+settings()->set('timezone', 'UTC');
+settings()->get('timezone');
 
 // the same:
 
-settings()->set('foo', 'bar');
-settings()->get('foo');
+settings(['timezone' => 'UTC']);
+settings('timezone');
+
+// user settings:
+
+settings()->scope($user)->set('lang', 'en');
+settings()->scope($user)->get('lang');
 
 ```
 
 You can also use the `Settings` facade:
 ```php
-Settings::set('foo', 'bar');
-Settings::get('foo');
+Settings::set('timezone', 'UTC');
+Settings::get('timezone');
 ```
 
 And if you prefer contracts, you can use Method dependency injection:
@@ -51,7 +58,7 @@ class MyController extends Controller
 {
     public function index(Settings $settings)
     {
-        $value = $settings->get('foo');
+        $tz = $settings->get('timezone');
     }
 }
 ```
@@ -307,11 +314,16 @@ foreach ($userSettings->all() as $key => $value)
 
 Cache is enabled by default, you can change this in your `config/settings.php` file.
 
-To clear the cache you can run the follow Artisan command: 
+To clear the cache you can run the following Artisan command: 
 
 ```bash
 php artisan settings:clear-cache
 ```
+
+> Note: this command does not actually delete cache entries, it only invalidates them by changing the prefix for keys. 
+> If you are using settings for models, the cache can grow quickly. For this reason, 
+> it is recommended to use drivers that support eviction policies, such as `redis`, 
+> or use the command `php artisan cache:clear` to completely clear the cache.
 
 ## Events
 
