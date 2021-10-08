@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 2.1.1 - 2021-10-08
+- Setting a new application instance to the `SettingsManager` by `Laravel\Octane\Events\RequestReceived` event
+
 ## 2.1.0 - 2021-10-07
 - Added Laravel Octane support
 - Fixed possible memory leaks
