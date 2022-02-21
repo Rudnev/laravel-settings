@@ -198,6 +198,8 @@ class SecondLevelRegionTest extends TestCase
 
         $store->shouldReceive('setMultiple')->andReturnUsing(function ($values) use (&$data) {
             $data = array_merge($data, $values);
+
+            return true;
         });
 
         $store->shouldReceive('forget')->andReturnUsing(function ($key) use (&$data) {

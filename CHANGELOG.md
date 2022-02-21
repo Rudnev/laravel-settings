@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 2.2.0 - 2022-02-21
+- Added Laravel 9.0 support
+
 ## 2.1.1 - 2021-10-08
 - Setting a new application instance to the `SettingsManager` by `Laravel\Octane\Events\RequestReceived` event
 
