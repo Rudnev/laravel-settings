@@ -153,7 +153,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
      * @param  mixed  $key
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return array_key_exists($key, $this->items);
     }
@@ -164,6 +164,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
      * @param  mixed  $key
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         $this->checkKeyType($key);
@@ -178,7 +179,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         $this->checkKeyType($key);
 
@@ -191,7 +192,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
      * @param  string  $key
      * @return void
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         unset($this->items[$key]);
     }
@@ -201,7 +202,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->items);
     }
@@ -247,7 +248,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->items);
     }
@@ -278,7 +279,7 @@ class Container implements ArrayAccess, Arrayable, Countable, IteratorAggregate,
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

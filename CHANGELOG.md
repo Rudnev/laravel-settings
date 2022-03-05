@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 2.2.1 - 2022-03-05
+- Fixed deprecation notices in PHP 8.1
+
 ## 2.2.0 - 2022-02-21
 - Added Laravel 9.0 support
 
