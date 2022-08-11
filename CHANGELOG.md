@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 2.2.2 - 2022-08-12
+- Fixed inconsistent cache for preloaded scopes when using Laravel Octane
+
 ## 2.2.1 - 2022-03-05
 - Fixed deprecation notices in PHP 8.1
 

@@ -330,9 +330,7 @@ class SettingsManager implements FactoryContract
             $store = $repo->getStore();
 
             if ($store instanceof CacheDecorator) {
-                $store->getFirstLevelCache()->flush(
-                    $this->getConfig('stores.'.$store->getName().'.scopes.preload') ?? []
-                );
+                $store->getFirstLevelCache()->flush();
             }
         }
 
