@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 2.3.0 - 2023-02-19
+- Added Laravel 10.x support
+
 ## 2.2.2 - 2022-08-12
 - Fixed inconsistent cache for preloaded scopes when using Laravel Octane
 
