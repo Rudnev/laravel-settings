@@ -446,7 +446,7 @@ class DatabaseStore implements StoreContract
     /**
      * Pack the value before write to the database.
      *
-     * @param $value
+     * @param  $value
      * @return string
      */
     protected function pack($value)
@@ -457,7 +457,7 @@ class DatabaseStore implements StoreContract
     /**
      * Unpack the value after retrieving then from the database.
      *
-     * @param $value
+     * @param  $value
      * @return string
      */
     protected function unpack($value)
