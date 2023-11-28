@@ -71,7 +71,7 @@ class SettingsManager implements FactoryContract
             throw new InvalidArgumentException(sprintf('Unable to resolve NULL store for [%s].', static::class));
         }
 
-        if (! isset($this->stores[$name])) {
+        if (!isset($this->stores[$name])) {
             $this->stores[$name] = $this->createStore($name);
         }
 
@@ -109,7 +109,7 @@ class SettingsManager implements FactoryContract
         if (isset($this->customCreators[$driver])) {
             return $this->callCustomCreator($driver, $name, $config);
         } else {
-            $method = 'create'.Str::studly($driver).'Store';
+            $method = 'create' . Str::studly($driver) . 'Store';
 
             if (method_exists($this, $method)) {
                 return $this->$method($name, $config);
@@ -262,7 +262,7 @@ class SettingsManager implements FactoryContract
         $secondLevelCache->setPrefix(sprintf('%s.%s', $config['prefix'] ?? 'ls', $storeName));
 
         if (isset($config['ttl'])) {
-            if ($this->app->version() >= 5.8) {
+            if (version_compare($this->app->version(), '5.8.0', '>=')) {
                 $secondLevelCache->setDefaultLifetime($config['ttl'] * 60);
             } else {
                 $secondLevelCache->setDefaultLifetime((int) $config['ttl']);
@@ -288,7 +288,7 @@ class SettingsManager implements FactoryContract
         }
 
         foreach ($this->getConfig('stores') as $name => $config) {
-            if (! empty($config['cache'])) {
+            if (!empty($config['cache'])) {
                 $this->getSecondLevelCache($name, $config['cache'])->flush();
             }
         }

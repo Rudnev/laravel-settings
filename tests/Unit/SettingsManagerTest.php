@@ -121,6 +121,11 @@ class SettingsManagerTest extends TestCase
     {
         $app = $this->getApp($this->getConfig());
 
+        $app->shouldReceive('version')->once()->andReturn('10.33.0');
+        $manager = new SettingsManager($app);
+        $store = $manager->store('bar')->getStore();
+        $this->assertEquals(60, $store->getSecondLevelCache()->getDefaultLifetime());
+
         $app->shouldReceive('version')->once()->andReturn('5.8.5');
         $manager = new SettingsManager($app);
         $store = $manager->store('bar')->getStore();
@@ -235,6 +240,8 @@ class SettingsManagerTest extends TestCase
         $cacheRepo = m::spy('Illuminate\Contracts\Cache\Repository');
         $cacheManager->shouldReceive('store')->andReturn($cacheRepo);
         $app->shouldReceive('offsetGet')->with(Factory::class)->andReturn($cacheManager);
+
+        $app->shouldReceive('version')->byDefault()->andReturn('10.0.0');
 
         return $app;
     }
