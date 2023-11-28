@@ -262,7 +262,7 @@ class SettingsManager implements FactoryContract
         $secondLevelCache->setPrefix(sprintf('%s.%s', $config['prefix'] ?? 'ls', $storeName));
 
         if (isset($config['ttl'])) {
-            if ($this->app->version() >= 5.8) {
+            if (version_compare($this->app->version(), '5.8.0', '>=')) {
                 $secondLevelCache->setDefaultLifetime($config['ttl'] * 60);
             } else {
                 $secondLevelCache->setDefaultLifetime((int) $config['ttl']);
