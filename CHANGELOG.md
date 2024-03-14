@@ -2,6 +2,9 @@
 
 All notable changes to `laravel-settings` will be documented in this file
 
+## 2.4.0 - 2024-03-14
+- Added Laravel 11.x support
+
 ## 2.3.1 - 2023-11-28
 - Fixed cache TTL for PHP >= 8.0
 
